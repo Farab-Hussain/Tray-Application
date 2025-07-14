@@ -6,17 +6,14 @@ const SplashScreen = () => {
   const navigation = useNavigation();
   useEffect(() => {
     const timeout = setTimeout(() => {
-      (navigation as any).navigate('splashScreenTwo');
+      (navigation as any).navigate('SplashScreenTwo');
     }, 3000);
     return () => clearTimeout(timeout);
   }, [navigation]);
   return (
     <View style={styles.container}>
       <Text>SplashScreen</Text>
-      <Image
-        source={require('../assets/images/logo.png')}
-        style={styles.img}
-      />
+      <Image source={require('../assets/images/logo.png')} style={styles.img} />
     </View>
   );
 };
@@ -29,8 +26,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     backgroundColor: '#000',
   },
-  img:{
+  img: {
     width: 200,
-    height: 140
-  }
+    height: 140,
+  },
 });

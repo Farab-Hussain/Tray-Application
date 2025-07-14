@@ -19,7 +19,7 @@ import 'lucide-react-native';
 import Header from '../../components/common/Header';
 
 const { width, height } = Dimensions.get('window');
-const Register: React.FC<{ navigation: any }> = ({ navigation }) => {
+const Login: React.FC<{ navigation: any }> = ({ navigation }) => {
   const [email] = useState<string>('');
   const [showPassword] = useState<boolean>(false);
   const isEmailValid = email.includes('@') && email.includes('.');
@@ -30,14 +30,14 @@ const Register: React.FC<{ navigation: any }> = ({ navigation }) => {
     >
       <View style={styles.container}>
         <SafeAreaView>
-          <Header title="Register" />
+          <Header title="Login" />
           <ScrollView
             contentContainerStyle={styles.scrollContainer}
             showsVerticalScrollIndicator={false}
             keyboardShouldPersistTaps="handled"
           >
             <View style={styles.contentContainer}>
-              <Text style={styles.title}>Register</Text>
+              <Text style={styles.title}>Login</Text>
 
               <View style={styles.formContainer}>
                 <Text style={styles.label}>Email</Text>
@@ -75,32 +75,17 @@ const Register: React.FC<{ navigation: any }> = ({ navigation }) => {
                       )}
                     </TouchableOpacity>
                   </View>
-                </View>
-                <View style={styles.inputContainer}>
-                  <Text style={styles.label}>Password</Text>
-                  <View style={styles.inputWrapper}>
-                    <TextInput
-                      style={styles.inputField}
-                      placeholder="Password"
-                      // secureTextEntry={!showPassword}
-                      // value={password}
-                      // onChangeText={setPassword}
-                    />
-                    <TouchableOpacity
-                      // onPress={() => setShowPassword(!showPassword)}
-                      accessibilityRole="button"
-                    >
-                      {showPassword ? (
-                        <Eye size={22} color="gray" style={styles.icon} />
-                      ) : (
-                        <EyeOff size={22} color="gray" style={styles.icon} />
-                      )}
-                    </TouchableOpacity>
-                  </View>
+
+                  <TouchableOpacity
+                    style={styles.link}
+                    onPress={() => navigation.navigate('forgetPassword')}
+                  >
+                    <Text style={styles.linkText}>ForgetPassword ?</Text>
+                  </TouchableOpacity>
                 </View>
 
                 <Button
-                  title="Sign up"
+                  title="Login"
                   onPress={() => {}}
                   customStyle={styles.button}
                   textStyle={styles.buttonText}
@@ -140,10 +125,12 @@ const Register: React.FC<{ navigation: any }> = ({ navigation }) => {
               </View>
             </View>
             <AuthFooter
-              promptText="Already have an account?"
-              buttonLabel="Log in"
+              promptText="Don't have an account?"
+              buttonLabel="Register"
               onPress={() => {
-                navigation.navigate('login');
+                navigation.navigate('register');
+                // TODO: Navigate to login screen
+                console.log('Navigate to login');
               }}
             />
           </ScrollView>
@@ -153,7 +140,7 @@ const Register: React.FC<{ navigation: any }> = ({ navigation }) => {
   );
 };
 
-export default Register;
+export default Login;
 
 const styles = StyleSheet.create({
   container: {
@@ -221,60 +208,6 @@ const styles = StyleSheet.create({
     lineHeight: Math.max(16, width * 0.04),
     fontFamily: 'Poppins',
     marginTop: height * 0.02,
-  },
-  dropdownButton: {
-    width: '100%',
-    height: Math.max(40, height * 0.05),
-    borderWidth: 1,
-    borderColor: 'gray',
-    borderRadius: 10,
-    paddingHorizontal: 10,
-    marginTop: 10,
-    justifyContent: 'center',
-    backgroundColor: 'white',
-  },
-  dropdownButtonText: {
-    flex: 1,
-    fontSize: Math.max(16, width * 0.04),
-    color: 'black',
-    fontFamily: 'Poppins',
-  },
-  dropdownPlaceholder: {
-    flex: 1,
-    fontSize: Math.max(16, width * 0.04),
-    color: 'gray',
-    fontFamily: 'Poppins',
-  },
-  modalOverlay: {
-    flex: 1,
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  dropdownContainer: {
-    backgroundColor: 'white',
-    borderRadius: 12,
-    maxHeight: height * 0.3,
-    width: Math.min(width * 0.8, 300),
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.15,
-    shadowRadius: 8,
-    elevation: 8,
-    paddingVertical: 18,
-    paddingHorizontal: 0,
-    marginBottom: 10,
-  },
-  dropdownItem: {
-    paddingVertical: 14,
-    paddingHorizontal: 20,
-    borderBottomWidth: 1,
-    borderBottomColor: '#f0f0f0',
-  },
-  dropdownItemText: {
-    fontSize: Math.max(16, width * 0.04),
-    color: 'black',
-    fontFamily: 'Poppins',
   },
   link: {
     marginTop: height * 0.02,

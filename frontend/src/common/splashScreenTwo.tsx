@@ -1,33 +1,42 @@
 import React from 'react';
-import { View, Text, Image, StyleSheet, TouchableOpacity } from 'react-native';
+import { View, Text, Image, StyleSheet } from 'react-native';
+import Button from '../components/auth/Button';
 import { useNavigation } from '@react-navigation/native';
 
 const SplashScreen: React.FC = () => {
-  const navigation = useNavigation<any>();
-    navigation.navigate('register');
-
+  const navigation = useNavigation();
   return (
     <View style={styles.container}>
       <Text>SplashScreen</Text>
-      <Image
-        source={require('../assets/images/logo.png')}
-        style={styles.img}
-      />
+      <Image source={require('../assets/images/logo.png')} style={styles.img} />
       <View style={styles.box}>
         <Text style={styles.title}>Let’s get started</Text>
-        <TouchableOpacity style={styles.btn} onPress={()=>{
-            navigation.navigate('register');
-        }}>
-            <Text style={styles.btnText}>Pick a Consultant</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.btn1}>
-            <Text style={styles.btnText}>REGISTER AS CONSULTANT</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.btn} onPress={()=>{
-            navigation.navigate('register');
-        }}>
-            <Text style={styles.btnText}>Register</Text>
-        </TouchableOpacity>
+        <View style={styles.buttonGroup}>
+          <Button
+            title="Pick a Consultant"
+            onPress={() => navigation.navigate('profile' as never)}
+            customStyle={StyleSheet.flatten([styles.btnYellow])}
+            textStyle={styles.btnTextBlack}
+          />
+          <Button
+            title="REGISTER AS CONSULTANT"
+            onPress={() => navigation.navigate('RegisterConsultant' as never)}
+            customStyle={StyleSheet.flatten([
+              styles.btnBlack,
+              styles.buttonSpacing,
+            ])}
+            textStyle={styles.btnTextWhite}
+          />
+          <Button
+            title="Register"
+            customStyle={StyleSheet.flatten([
+              styles.btnYellow,
+              styles.buttonSpacing,
+            ])}
+            onPress={() => navigation.navigate('register' as never)}
+            textStyle={styles.btnTextBlack}
+          />
+        </View>
       </View>
     </View>
   );
@@ -41,51 +50,57 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     backgroundColor: '#000',
   },
-  img:{
+  img: {
     width: 200,
-    height: 140
+    height: 140,
   },
-  title:{
+  title: {
     fontSize: 20,
-    fontWeight: 'bold'
+    fontWeight: 'bold',
   },
-  box:{
+  box: {
     width: '100%',
-    height: '30%',
     backgroundColor: '#fff',
     position: 'absolute',
     bottom: 0,
-    borderRadius:20,
+    borderRadius: 20,
     padding: 30,
     justifyContent: 'space-between',
-    alignItems: 'center'
+    alignItems: 'center',
   },
-  btn:{
-    minHeight:48,
-    width:320,
-    backgroundColor:'#FFCB4B',
-    alignItems:'center',
-    justifyContent:'center',
-    borderRadius:10,
-    paddingHorizontal:16,
-    paddingVertical:8
+  btnYellow: {
+    backgroundColor: '#FFCB4B',
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderRadius: 10,
   },
-  btn1:{
-    minHeight:48,
-    width:320,
-    backgroundColor:'#000',
-    alignItems:'center',
-    justifyContent:'center',
-    borderRadius:10,
-    paddingHorizontal:16,
-    paddingVertical:8
+  btnBlack: {
+    backgroundColor: '#000',
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderRadius: 10,
   },
-  btnText:{
-    color:'#fff',
-    fontSize:16,
-    fontWeight:'bold',
-    textTransform:'uppercase',
-    textAlign:'center',
-    includeFontPadding:false
-  }
+  btnTextBlack: {
+    color: 'black',
+    fontSize: 16,
+    fontWeight: 'bold',
+    textTransform: 'uppercase',
+    textAlign: 'center',
+    includeFontPadding: false,
+  },
+  btnTextWhite: {
+    color: 'white',
+    fontSize: 16,
+    fontWeight: 'bold',
+    textTransform: 'uppercase',
+    textAlign: 'center',
+    includeFontPadding: false,
+  },
+  buttonGroup: {
+    width: '100%',
+    alignItems: 'center',
+  },
+  buttonSpacing: {
+    marginTop: 8,
+  },
 });
