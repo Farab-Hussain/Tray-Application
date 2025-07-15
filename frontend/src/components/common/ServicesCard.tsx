@@ -1,6 +1,6 @@
 import React from 'react';
 import { Image, StyleSheet, Text, View } from 'react-native';
-import Button from '../auth/Button';
+import Button from './Button';
 import { useNavigation } from '@react-navigation/native';
 
 interface ServicesCardProps {

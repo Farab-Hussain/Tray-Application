@@ -12,6 +12,7 @@ import {
 } from 'react-native';
 import Header from '../../components/common/Header';
 import { TextInput } from 'react-native';
+import Button from '../../components/common/Button';
 // import { ChevronRight } from 'lucide-react-native';
 
 const { width } = Dimensions.get('window');
@@ -40,21 +41,45 @@ const Review = () => {
         </View>
         <Text style={styles.heading}>Write your review</Text>
         <View style={styles.inputWrapper}>
-          <TextInput placeholder="Add your review here"  />
+          <TextInput placeholder="Add your review here" />
         </View>
         <Text style={styles.heading}>
           Would you recommend Dr. Alex Zender to your friends?
         </Text>
-      <View style={styles.radioGroup}>
-        <TouchableOpacity style={styles.radioOption} onPress={() => setRecommend('yes')}>
-          <View style={recommend === 'yes' ? styles.radioCircleSelected : styles.radioCircle} />
-          <Text style={styles.radioLabel}>Yes</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.radioOption} onPress={() => setRecommend('no')}>
-          <View style={recommend === 'no' ? styles.radioCircleSelected : styles.radioCircle} />
-          <Text style={styles.radioLabel}>No</Text>
-        </TouchableOpacity>
-      </View>
+        <View style={styles.radioGroup}>
+          <TouchableOpacity
+            style={styles.radioOption}
+            onPress={() => setRecommend('yes')}
+          >
+            <View
+              style={
+                recommend === 'yes'
+                  ? styles.radioCircleSelected
+                  : styles.radioCircle
+              }
+            />
+            <Text style={styles.radioLabel}>Yes</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={styles.radioOption}
+            onPress={() => setRecommend('no')}
+          >
+            <View
+              style={
+                recommend === 'no'
+                  ? styles.radioCircleSelected
+                  : styles.radioCircle
+              }
+            />
+            <Text style={styles.radioLabel}>No</Text>
+          </TouchableOpacity>
+        </View>
+        <Button
+          title="Submit"
+          customStyle={styles.btn}
+          textStyle={styles.btnText}
+          onPress={() => {}}
+        />
       </SafeAreaView>
     </KeyboardAvoidingView>
   );
@@ -114,15 +139,19 @@ const styles = StyleSheet.create({
     marginTop: 10,
     padding: 10,
   },
-  radioGroup:{
+  radioGroup: {
     flexDirection: 'row',
     gap: 20,
     marginTop: 10,
+    justifyContent: 'flex-start',
+    alignItems: 'center',
+    alignSelf: 'flex-start',
   },
   radioOption: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: 8,
+    justifyContent: 'flex-start',
   },
   radioCircle: {
     width: 20,
@@ -136,9 +165,9 @@ const styles = StyleSheet.create({
     width: 20,
     height: 20,
     borderRadius: 10,
-    borderWidth: 2,
-    borderColor: '#007AFF',
-    backgroundColor: '#007AFF',
+    borderWidth: 4,
+    borderColor: '#000',
+    backgroundColor: '#FFF',
   },
   radioLabel: {
     fontSize: 16,
@@ -161,8 +190,8 @@ const styles = StyleSheet.create({
     height: 40,
     borderRadius: 20,
     backgroundColor: '#E0E0E0',
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: 'flex-start',
+    alignItems: 'flex-start',
     marginRight: 15,
   },
   menuLabel: {
@@ -172,6 +201,13 @@ const styles = StyleSheet.create({
     fontWeight: '500',
   },
   menuArrow: {
-    marginLeft: 10,
+    // marginLeft: 10,
+  },
+  btn: {
+    backgroundColor: '#FFCB4B',
+    width: '80%',
+  },
+  btnText: {
+    color: '#000',
   },
 });

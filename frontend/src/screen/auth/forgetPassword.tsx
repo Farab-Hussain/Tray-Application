@@ -13,7 +13,7 @@ import {
 import { useNavigation } from '@react-navigation/native';
 import Header from '../../components/common/Header';
 import AuthFooter from '../../components/auth/AuthFooter';
-import Button from '../../components/auth/Button';
+import Button from '../../components/common/Button';
 
 const { width, height } = Dimensions.get('window');
 const SPACING = Math.max(16, width * 0.04);
@@ -73,7 +73,7 @@ const ForgetPasswordScreen = () => {
           <AuthFooter
             promptText="Don't have an account?"
             buttonLabel="Register"
-            onPress={handleSendOtp}
+            onPress={() => navigation.navigate('register' as never)}
           />
         </View>
       </SafeAreaView>

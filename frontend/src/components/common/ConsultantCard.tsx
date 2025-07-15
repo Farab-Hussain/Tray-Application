@@ -1,56 +1,31 @@
 import React from 'react';
 import { Image, StyleSheet, Text, View } from 'react-native';
-import { MessageCircle, Phone, Video } from 'lucide-react-native';
-import Button from '../auth/Button';
-import { useNavigation } from '@react-navigation/native';
+import Button from './Button';
 
 interface ConsultantCardProps {
-  name: string;
-  role: string;
-  rating: number;
-  image?: string;
+  name?: string;
+  service?: string;
 }
 
 const ConsultantCard: React.FC<ConsultantCardProps> = ({
-  name,
-  role,
-  rating,
-  image,
+  name = 'Williams Joe',
+  service = 'Adjudication Prep',
 }) => {
-  const navigation = useNavigation();
   return (
-    <View style={styles.card}>
-      <Image
-        source={
-          image ? { uri: image } : require('../../assets/images/consultant.png')
-        }
-        style={styles.avatar}
-      />
-      <Text style={styles.title}>{name}</Text>
-      <Text style={styles.subtitle}>{role}</Text>
-      <Button
-        title="Book now"
-        onPress={() => {
-          navigation.navigate('services' as never);
-        }}
-        customStyle={styles.bookBtn}
-        textStyle={styles.bookBtnText}
-      />
-      <View style={styles.iconRow}>
-        <View style={styles.iconWrapper}>
-          <MessageCircle style={styles.icon} size={18} color="#187D22" />
-        </View>
-        <View style={styles.iconWrapper}>
-          <Phone style={styles.icon} size={18} color="#187D22" />
-        </View>
-        <View style={styles.iconWrapper}>
-          <Video style={styles.icon} size={18} color="#187D22" />
-        </View>
+    <View style={styles.box}>
+      <View style={styles.row}>
+        <Image
+          source={require('../../assets/images/consultant.png')}
+          style={styles.avatar}
+        />
+        <Text style={styles.label}>Matched</Text>
       </View>
-      <View style={styles.ratingRow}>
-        <Text style={styles.star}>★</Text>
-        <Text style={styles.ratingText}>{rating}</Text>
-      </View>
+      <Text style={styles.heading}>Client Name</Text>
+      <Text style={styles.subheading}>{name}</Text>
+      <Text style={styles.heading}>Service Needed</Text>
+      <Text style={styles.subheading}>{service}</Text>
+      <Button title={'Accept Request'} onPress={() => {}} textStyle={styles.btnText} customStyle={styles.btn} />
+      <Button title={'Decline'} onPress={() => {}} textStyle={styles.btnTextDecline} customStyle={styles.btnDecline} />
     </View>
   );
 };
@@ -58,13 +33,15 @@ const ConsultantCard: React.FC<ConsultantCardProps> = ({
 export default ConsultantCard;
 
 const styles = StyleSheet.create({
-  card: {
+  box: {
     height: 240,
-    width: 165, // Increased from 152 to 180
+    width: 165,
     backgroundColor: '#fff',
-    borderRadius: 16,
+    flex: 0,
     alignItems: 'center',
-    padding: 10,
+    justifyContent: 'flex-start',
+    borderRadius: 16,
+    padding: 8,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
@@ -72,82 +49,82 @@ const styles = StyleSheet.create({
     elevation: 3,
     margin: 8,
   },
-  avatar: {
-    width: 70,
-    height: 70,
-    borderRadius: 35,
-    marginBottom: 8,
-    marginTop: 2,
-  },
-  title: {
-    fontSize: 15,
-    fontFamily: 'Poppins',
-    fontWeight: 'bold',
-    color: '#000',
-    textAlign: 'center',
-    marginBottom: 2,
-  },
-  subtitle: {
-    fontSize: 12,
-    fontFamily: 'Poppins',
-    fontWeight: '500',
-    color: '#7E7D7D',
-    textAlign: 'center',
-    marginBottom: 0, // Remove space below subtitle
-  },
-  bookBtn: {
-    height: 28,
-    minHeight: 18,
-    borderRadius: 8,
-    backgroundColor: '#FFCB4B',
-    alignSelf: 'center',
-    marginVertical: 0, // Reduced vertical margin
-    // paddingHorizontal: 8,
-    paddingVertical: 0,
-    marginTop: 10, // Remove space above button
-  },
-  bookBtnText: {
-    fontSize: 11,
-    color: '#000',
-    fontWeight: '600',
-    paddingVertical: 0,
+  row: {
+    width: '100%',
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    borderRadius: 10,
+    backgroundColor: 'white',
     paddingHorizontal: 0,
+    paddingVertical: 0,
+    marginBottom: 4,
   },
-  iconRow: {
-    flexDirection: 'row',
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginTop: 6,
-    marginBottom: 2,
-    gap: 8,
+  avatar: {
+    width: 45,
+    height: 45,
+    borderRadius: 22.5,
   },
-  iconWrapper: {
-    borderWidth: 1.5,
-    borderColor: '#187D22',
-    borderRadius: 20,
-    padding: 4,
-    marginHorizontal: 4,
-    alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: '#fff',
-  },
-  icon: {
-    marginHorizontal: 0,
+  label: {
+    fontSize: 9,
+    fontWeight: 'bold',
     color: '#187D22',
+    textAlign: 'center',
+    backgroundColor: '#ADEBB3',
+    paddingVertical: 2,
+    paddingHorizontal: 10,
+    borderRadius: 12,
   },
-  ratingRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
+  heading: {
+    fontSize: 11,
+    paddingVertical: 2,
+    paddingHorizontal: 6,
+    borderRadius: 10,
+    fontWeight: 'bold',
+    alignSelf: 'flex-start',
     marginTop: 2,
   },
-  star: {
-    color: '#FFD700',
-    fontSize: 15,
-    marginRight: 2,
+  subheading: {
+    fontSize: 10,
+    paddingVertical: 1,
+    paddingHorizontal: 6,
+    borderRadius: 10,
+    fontWeight: '600',
+    alignSelf: 'flex-start',
+    marginBottom: 2,
   },
-  ratingText: {
-    fontWeight: 'bold',
-    fontSize: 13,
+  btn: {
+    backgroundColor: '#FFCB4B',
+    height: 32,
+    width: '90%',
+    marginTop: 6,
+    borderRadius: 8,
+    alignSelf: 'center',
+    justifyContent: 'center',
+    paddingVertical: 0,
+  },
+  btnText: {
     color: '#000',
+    fontSize: 13,
+    fontWeight: '600',
+    fontFamily: 'Poppins',
+  },
+  btnDecline: {
+    backgroundColor: 'transparent',
+    borderWidth: 1,
+    borderColor: '#E64646',
+    height: 32,
+    width: '90%',
+    marginTop: 4,
+    borderRadius: 8,
+    alignSelf: 'center',
+    justifyContent: 'center',
+    paddingVertical: 0,
+  },
+  btnTextDecline: {
+    color: '#E64646',
+    fontSize: 13,
+    fontWeight: '600',
+    fontFamily: 'Poppins',
   },
 });

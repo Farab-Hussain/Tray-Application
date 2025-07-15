@@ -9,7 +9,7 @@ import {
 } from 'react-native';
 import { Calendar } from 'react-native-calendars';
 import Header from '../components/common/Header';
-import Button from '../components/auth/Button';
+import Button from '../components/common/Button';
 import { useNavigation } from '@react-navigation/native';
 import type { StackNavigationProp } from '@react-navigation/stack';
 

@@ -4,13 +4,11 @@ import {
   StyleSheet,
   Text,
   ScrollView,
-  View,
   FlatList,
-  TouchableOpacity,
+  View,
 } from 'react-native';
 import ProfileHeader from '../../components/common/ProfileHeader';
-import TopCard from '../../components/common/TopCard';
-import RecommendedCard from '../../components/common/RecommendedCard';
+import ConsultantCard from '../../components/common/ConsultantCard';
 
 const consultantData = [
   { id: '1', name: 'John Deering', role: 'Consultant', rating: 4.8 },
@@ -24,27 +22,15 @@ const home = () => {
     <SafeAreaView style={styles.safeArea}>
       <ProfileHeader title="Pick a Consultant" />
       <ScrollView contentContainerStyle={styles.container}>
-        <Text style={styles.title}>Top Consultant</Text>
-        <TopCard />
-        <View style={styles.consultantRow}>
-          <Text style={styles.consultantTitle}>Consultants</Text>
-          <TouchableOpacity onPress={() => {}} style={styles.seeAllBtn}>
-            <Text style={styles.seeAllBtnText}>See all</Text>
-          </TouchableOpacity>
-        </View>
-
-        <View style={styles.centeredContent}>
+        <View>
+          <Text style={styles.title}>Lead Matched</Text>
           <FlatList
             data={consultantData}
             keyExtractor={item => item.id}
             numColumns={2}
             columnWrapperStyle={styles.cardRow}
             renderItem={({ item }) => (
-              <RecommendedCard
-                name={item.name}
-                role={item.role}
-                rating={item.rating}
-              />
+              <ConsultantCard name={item.name} service={item.role} />
             )}
             contentContainerStyle={styles.flatListContentContainer}
             showsVerticalScrollIndicator={false}

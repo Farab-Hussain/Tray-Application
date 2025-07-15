@@ -15,7 +15,7 @@ import { useNavigation, useRoute } from '@react-navigation/native';
 import axios from 'axios';
 import Header from '../../components/common/Header';
 import AuthFooter from '../../components/auth/AuthFooter';
-import AuthButton from '../../components/auth/Button';
+import AuthButton from '../../components/common/Button';
 
 const { width, height } = Dimensions.get('window');
 const SPACING = Math.max(16, width * 0.04); // Responsive base spacing

@@ -10,7 +10,7 @@ import changePassword from '../screen/auth/changePassword';
 import profile from '../screen/student/home';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { Menu, BookOpen, MessageCircle, Bell, User } from 'lucide-react-native';
-import services from '../screen/student/services';
+import services from '../common/services';
 import selectSlot from '../common/selectSlot';
 import MyCart from '../screen/student/myCart';
 import home from '../screen/student/home';
@@ -84,7 +84,7 @@ function StudentTabNavigator() {
 const StudentNavigation = () => {
   return (
     <Stack.Navigator
-      initialRouteName="StudentTabs"
+      initialRouteName="Splash"
       screenOptions={{
         headerStyle: {
           backgroundColor: '#FFCB4B',

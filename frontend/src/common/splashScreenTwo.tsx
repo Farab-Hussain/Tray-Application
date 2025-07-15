@@ -1,10 +1,12 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import { View, Text, Image, StyleSheet } from 'react-native';
-import Button from '../components/auth/Button';
+import Button from '../components/common/Button';
 import { useNavigation } from '@react-navigation/native';
+import { UserRoleContext } from '../../App';
 
 const SplashScreen: React.FC = () => {
   const navigation = useNavigation();
+  const { setUserRole } = useContext(UserRoleContext);
   return (
     <View style={styles.container}>
       <Text>SplashScreen</Text>
@@ -20,7 +22,7 @@ const SplashScreen: React.FC = () => {
           />
           <Button
             title="REGISTER AS CONSULTANT"
-            onPress={() => navigation.navigate('RegisterConsultant' as never)}
+            onPress={() => setUserRole('consultant')}
             customStyle={StyleSheet.flatten([
               styles.btnBlack,
               styles.buttonSpacing,

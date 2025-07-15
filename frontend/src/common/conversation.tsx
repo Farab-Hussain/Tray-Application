@@ -83,7 +83,7 @@ const Conversation = () => {
           <TouchableOpacity
             style={styles.chatRow}
             onPress={() =>
-              navigation.navigate('Chart', {
+              navigation.navigate('chart', {
                 name: item.name,
                 image: item.image,
                 role: 'Senior Consultant', // Or dynamic role
@@ -107,7 +107,7 @@ const Conversation = () => {
             </View>
           </TouchableOpacity>
         )}
-        contentContainerStyle={{ paddingBottom: 20 }}
+        contentContainerStyle={styles.flatListContentContainer}
         showsVerticalScrollIndicator={false}
       />
     </View>
@@ -191,5 +191,8 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     marginBottom: 8,
     color: '#000',
+  },
+  flatListContentContainer: {
+    paddingBottom: 20,
   },
 });

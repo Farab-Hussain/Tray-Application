@@ -15,7 +15,7 @@ import {
 import { useNavigation } from '@react-navigation/native';
 import { ChevronLeft } from 'lucide-react-native';
 import AuthFooter from '../../components/auth/AuthFooter';
-import Button from '../../components/auth/Button';
+import Button from '../../components/common/Button';
 // import axios from 'axios';
 
 const { width, height } = Dimensions.get('window');

@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, Text, StyleSheet, Image, Dimensions } from 'react-native';
-import Button from '../auth/Button';
+import Button from './Button';
 import { useNavigation } from '@react-navigation/native';
 
 const { width, height } = Dimensions.get('window');

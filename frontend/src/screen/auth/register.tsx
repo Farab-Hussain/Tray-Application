@@ -10,10 +10,11 @@ import {
   TouchableOpacity,
   TextInput,
   Dimensions,
+  Image,
 } from 'react-native';
 import { useState } from 'react';
 import AuthFooter from '../../components/auth/AuthFooter';
-import Button from '../../components/auth/Button';
+import Button from '../../components/common/Button';
 import { CheckCircle, Eye, EyeOff } from 'lucide-react-native';
 import 'lucide-react-native';
 import Header from '../../components/common/Header';
@@ -123,19 +124,28 @@ const Register: React.FC<{ navigation: any }> = ({ navigation }) => {
                   style={styles.socialButton}
                   accessibilityRole="button"
                 >
-                  {/* <GoogleIcon width={24} height={24} /> */}
+                  <Image
+                    source={require('../../assets/images/social-icon/facebook.png')}
+                    style={styles.socialIcon}
+                  />
                 </TouchableOpacity>
                 <TouchableOpacity
                   style={styles.socialButton}
                   accessibilityRole="button"
                 >
-                  {/* <FacebookIcon width={24} height={24} /> */}
+                  <Image
+                    source={require('../../assets/images/social-icon/google.png')}
+                    style={styles.socialIcon}
+                  />
                 </TouchableOpacity>
                 <TouchableOpacity
                   style={styles.socialButton}
                   accessibilityRole="button"
                 >
-                  {/* <AppleIcon width={24} height={24} /> */}
+                  <Image
+                    source={require('../../assets/images/social-icon/apple.png')}
+                    style={styles.socialIcon}
+                  />
                 </TouchableOpacity>
               </View>
             </View>
@@ -345,11 +355,16 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     marginHorizontal: 10,
-    width: 108,
+    width: '30%',
     height: 56,
     borderWidth: 1,
     borderColor: 'gray',
-    opacity: 0.5,
+  },
+  socialIcon: {
+    width: 32,
+    height: 32,
+    resizeMode: 'contain',
+    alignSelf: 'center',
   },
   signupContainer: {
     flexDirection: 'row',
