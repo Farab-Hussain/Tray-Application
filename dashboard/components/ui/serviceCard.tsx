@@ -1,38 +1,57 @@
 import React from "react";
 import Image from "next/image";
 
-
-const ServiceCard = ({ name, desc, tag, image }:{name:string,desc:string,tag:string,image:string}) => {
+const ServiceCard = ({
+  name,
+  desc,
+  tag,
+  image,
+}: {
+  name: string;
+  desc: string;
+  tag: string;
+  image: string;
+}) => {
   return (
-    <div className="h-fit w-full flex justify-between items-center gap-5">
-      <div className="h-[155px] w-full shadow-2xl rounded-sm p-5">
-        <div className="h-fit w-full flex justify-start items-center py-3">
-          <Image src="/next.svg" height={100} width={100} alt="job" />
-          <div>
-            <h1 className="text=[14px] font-bold">{name}</h1>
-            <p className="text-[12px] text-black/40 font-medium">{desc}</p>
+    <div className="w-full max-w-full flex flex-col sm:flex-row justify-between items-stretch gap-3 sm:gap-5">
+      <div className="w-full shadow-2xl rounded-sm p-3 sm:p-5 bg-white overflow-hidden">
+        <div className="flex flex-col xs:flex-row sm:flex-row justify-start items-center gap-2 py-2 sm:py-3">
+          <Image
+            src={image || "/next.svg"}
+            height={60}
+            width={60}
+            alt="job"
+            className="w-12 h-12 sm:w-[100px] sm:h-[100px] object-contain"
+          />
+          <div className="flex-1 min-w-0 text-center sm:text-left">
+            <h1 className="text-[14px] sm:text-[16px] font-bold break-words">{name}</h1>
+            <p className="text-[12px] sm:text-[14px] text-black/40 font-medium break-words">
+              {desc}
+            </p>
           </div>
         </div>
-        <label className="text-[10px] bg-[#EFEFEF] px-2 py-1 mx-3 rounded-sm">
-          {tag}
-        </label>
-        <label className="text-[10px] bg-[#EFEFEF] px-2 py-1 mx-3 rounded-sm">
-          {tag}
-        </label>
-        <label className="text-[10px] bg-[#EFEFEF] px-2 py-1 mx-3 rounded-sm">
-          {tag}
-        </label>
-        <div className="flex justify-between items-center py-3">
-          <h1 className="text-[#FFCB4B]">
+        <div className="flex flex-wrap gap-2 my-2 justify-center sm:justify-start">
+          <label className="text-[10px] sm:text-[12px] bg-[#EFEFEF] px-2 py-1 rounded-sm">
+            {tag}
+          </label>
+          <label className="text-[10px] sm:text-[12px] bg-[#EFEFEF] px-2 py-1 rounded-sm">
+            {tag}
+          </label>
+          <label className="text-[10px] sm:text-[12px] bg-[#EFEFEF] px-2 py-1 rounded-sm">
+            {tag}
+          </label>
+        </div>
+        <div className="flex flex-col sm:flex-row justify-between items-center py-2 sm:py-3 gap-2">
+          <h1 className="text-[#FFCB4B] text-[14px] sm:text-[16px]">
             <span>★</span>
             <span>★</span>
             <span>★</span>
             <span>★</span>
             <span>★</span>
           </h1>
-          {/* <div> */}
-          <h1>✅Verified Service</h1>
-          {/* </div> */}
+          <h1 className="text-[12px] sm:text-[14px] text-green-600 font-semibold">
+            ✅Verified Service
+          </h1>
         </div>
       </div>
     </div>

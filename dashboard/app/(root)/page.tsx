@@ -1,4 +1,4 @@
-import ProfileForm from "@/components/ui/ProfileForm";
+// import ProfileForm from "@/components/ui/ProfileForm";
 import ServiceCard from "@/components/ui/serviceCard";
 import Image from "next/image";
 import React from "react";
@@ -17,7 +17,7 @@ const services = [
 const page = () => {
   return (
     <main className="layout">
-      <div className="md:h-[168px] h-fit p-5 md:p-5 w-full bg-[#ADEBB3] rounded-sm flex   flex-col  md:flex-row justify-between items-center">
+      <div className="md:h-[168px] h-fit p-5 md:p-5 w-full bg-[#ADEBB3] rounded-sm flex flex-col  md:flex-row justify-between items-center">
         <div className="flex flex-col justify-center gap-3 ">
           <h1 className="font-semibold text-[31px]">Welcome John Doe</h1>
           <h3 className="text-2xl text-black/40 ">
@@ -38,6 +38,7 @@ const page = () => {
           />
         ))}
       </div>
+      {/* <ProfileForm/> */}
     </main>
   );
 };

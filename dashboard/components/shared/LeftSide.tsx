@@ -36,6 +36,11 @@ const LeftSide = () => {
                 LeftSide
               </h1>
             </div>
+            {/* Add navigation links */}
+            <nav className="mt-4 flex flex-col gap-2">
+              <a href="/earning" className="text-sm sm:text-base px-2 py-1 rounded hover:bg-gray-200 transition-colors">Earning</a>
+              <a href="/brokerComission" className="text-sm sm:text-base px-2 py-1 rounded hover:bg-gray-200 transition-colors">Broker Comission</a>
+            </nav>
           </main>
           <div className="mt-auto w-full flex justify-center pt-4">
             <img src="/logo.svg" alt="Logo" className="h-16 w-auto" />

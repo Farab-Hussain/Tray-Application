@@ -116,7 +116,7 @@ const StudentNavigation = () => {
         options={{ headerShown: false }}
       />
       <Stack.Screen
-        name="forgetPassword"
+        name="forget Password"
         component={forgetPassword}
         options={{ headerShown: false }}
       />

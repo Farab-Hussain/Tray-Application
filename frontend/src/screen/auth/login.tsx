@@ -81,7 +81,7 @@ const Login: React.FC<{ navigation: any }> = ({ navigation }) => {
                     style={styles.link}
                     onPress={() => navigation.navigate('forgetPassword')}
                   >
-                    <Text style={styles.linkText}>ForgetPassword ?</Text>
+                    <Text style={styles.linkText}>Forget  Password ?</Text>
                   </TouchableOpacity>
                 </View>
 
