@@ -12,7 +12,7 @@ import {
   Dimensions,
   Image,
 } from 'react-native';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 import AuthFooter from '../../components/auth/AuthFooter';
 import Button from '../../components/common/Button';
@@ -22,14 +22,23 @@ import Header from '../../components/common/Header';
 import { signup } from '../../services/authService';
 
 const { width, height } = Dimensions.get('window');
-const Register: React.FC<{ navigation: any }> = ({ navigation }) => {
+const Register: React.FC<{ navigation: any; route?: any }> = ({ navigation, route }) => {
   const [name, setName] = useState<string>('');
   const [email, setEmail] = useState<string>('');
   const [password, setPassword] = useState<string>('');
   const [showPassword, setShowPassword] = useState<boolean>(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [role, setRole] = useState<'student' | 'consultant'>('student');
   const isEmailValid = email.includes('@') && email.includes('.');
+
+  useEffect(() => {
+    if (route && route.params && route.params.preselectedRole) {
+      setRole(route.params.preselectedRole);
+    } else {
+      setRole('student');
+    }
+  }, [route]);
 
   // Handle form submit
   const handleSubmit = async () => {
@@ -40,7 +49,7 @@ const Register: React.FC<{ navigation: any }> = ({ navigation }) => {
     }
     setLoading(true);
     try {
-      await signup({ name, email, password, role: 'student' });
+      await signup({ name, email, password, role });
       navigation.navigate('login');
     } catch (err: any) {
       setError(

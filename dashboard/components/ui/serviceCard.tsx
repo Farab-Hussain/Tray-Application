@@ -1,19 +1,24 @@
 import React from "react";
 import Image from "next/image";
 
-const ServiceCard = ({
-  name,
-  desc,
-  tag,
-  image,
-}: {
+type ServiceCardProps = {
   name: string;
   desc: string;
   tag: string;
   image: string;
-}) => {
+  onClick?: () => void;
+};
+
+const ServiceCard: React.FC<ServiceCardProps> = ({ name, desc, tag, image, onClick }) => {
   return (
-    <div className="w-full max-w-full flex flex-col sm:flex-row justify-between items-stretch gap-3 sm:gap-5">
+    <div
+      className="w-full max-w-full flex flex-col sm:flex-row justify-between items-stretch gap-3 sm:gap-5 cursor-pointer hover:shadow-yellow-300 transition-shadow"
+      onClick={onClick}
+      tabIndex={0}
+      role="button"
+      onKeyDown={e => { if (e.key === 'Enter' && onClick) onClick(); }}
+      style={{ outline: 'none' }}
+    >
       <div className="w-full shadow-2xl rounded-sm p-3 sm:p-5 bg-white overflow-hidden">
         <div className="flex flex-col xs:flex-row sm:flex-row justify-start items-center gap-2 py-2 sm:py-3">
           <Image

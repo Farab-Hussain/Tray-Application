@@ -11,6 +11,7 @@ import {
   TextInput,
   Dimensions,
   Image,
+  Linking,
 } from 'react-native';
 import { useState } from 'react';
 import AuthFooter from '../../components/auth/AuthFooter';
@@ -41,7 +42,11 @@ const Login: React.FC<{ navigation: any }> = ({ navigation }) => {
       const res = await loginApi(email, password);
       await AsyncStorage.setItem('auth_token', res.token);
       await AsyncStorage.setItem('user', JSON.stringify(res.user));
-      navigation.navigate('StudentTabs');
+      if (res.user.role === 'consultant') {
+        Linking.openURL('http://localhost:3000');
+      } else {
+        navigation.navigate('StudentTabs');
+      }
     } catch (err: any) {
       setError(err.response?.data?.message || err.message || 'Login failed.');
     } finally {

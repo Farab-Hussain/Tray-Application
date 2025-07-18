@@ -12,6 +12,9 @@ import notification from '../common/notification';
 import myCart from '../screen/student/myCart';
 import VideoCall from '../common/videoCall';
 import { Menu, Calendar, MessageCircle, Bell } from 'lucide-react-native';
+import ConsultantProfileSetup from '../screen/consultant/ConsultantProfileSetup';
+import ConsultantServiceApplication from '../screen/consultant/ConsultantServiceApplication';
+import ConsultantVerificationPending from '../screen/consultant/ConsultantVerificationPending';
 
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -65,6 +68,9 @@ const ConsultantNavigation = () => {
   return (
     <Stack.Navigator>
       <Stack.Screen name="ConsultantTabs" component={ConsultantTabNavigator} options={{ headerShown: false }} />
+      <Stack.Screen name="ConsultantProfileSetup" component={ConsultantProfileSetup} options={{ headerShown: false }} />
+      <Stack.Screen name="ConsultantServiceApplication" component={ConsultantServiceApplication} options={{ headerShown: false }} />
+      <Stack.Screen name="ConsultantVerificationPending" component={ConsultantVerificationPending} options={{ headerShown: false }} />
       <Stack.Screen name="selectSlot" component={selectSlot} options={{ headerShown: false }} />
       <Stack.Screen name="call" component={call} options={{ headerShown: false }} />
       <Stack.Screen name="chart" component={chart} options={{ headerShown: false }} />

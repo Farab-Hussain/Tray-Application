@@ -20,9 +20,15 @@ import Notification from '../common/notification';
 import Call from '../common/call';
 import VideoCall from '../common/videoCall';
 import review from '../screen/student/review';
+import { Alert, TouchableOpacity, View, Text } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
+
+function LogoutTab() {
+  return null;
+}
 
 function StudentTabNavigator() {
   return (
@@ -37,6 +43,8 @@ function StudentTabNavigator() {
           if (route.name === 'Notifications')
             return <Bell size={size} color={color} />;
           if (route.name === 'Profile')
+            return <User size={size} color={color} />;
+          if (route.name === 'Logout')
             return <User size={size} color={color} />;
           return <User size={size} color={color} />;
         },
@@ -76,7 +84,45 @@ function StudentTabNavigator() {
         component={Profile}
         options={{ title: 'Account', headerShown: false }}
       />
+      <Tab.Screen
+        name="Logout"
+        component={LogoutTab}
+        options={{
+          title: 'Logout',
+          headerShown: false,
+          tabBarButton: props => <LogoutButton {...props} />,
+        }}
+      />
     </Tab.Navigator>
+  );
+}
+
+function LogoutButton(props: any) {
+  const navigation = props.navigation;
+  return (
+    <TouchableOpacity
+      {...props}
+      onPress={() => {
+        Alert.alert('Logout', 'Are you sure you want to logout?', [
+          { text: 'Cancel', style: 'cancel' },
+          {
+            text: 'Yes',
+            style: 'destructive',
+            onPress: async () => {
+              await AsyncStorage.clear();
+              navigation.navigate('login');
+            },
+          },
+        ]);
+      }}
+    >
+      <View style={{ alignItems: 'center', justifyContent: 'center', flex: 1 }}>
+        <User size={24} color="#187D22" />
+        <Text style={{ fontSize: 12, color: '#187D22', marginBottom: 2 }}>
+          Logout
+        </Text>
+      </View>
+    </TouchableOpacity>
   );
 }
 
@@ -175,9 +221,10 @@ const StudentNavigation = () => {
         options={{ headerShown: false }}
       />
       <Stack.Screen
-      name='Review'
-      component={review}
-      options={{ headerShown: false }}/>
+        name="Review"
+        component={review}
+        options={{ headerShown: false }}
+      />
     </Stack.Navigator>
   );
 };
