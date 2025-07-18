@@ -39,7 +39,7 @@ const Login: React.FC<{ navigation: any }> = ({ navigation }) => {
     setLoading(true);
     try {
       const res = await loginApi(email, password);
-      await AsyncStorage.setItem('token', res.token);
+      await AsyncStorage.setItem('auth_token', res.token);
       await AsyncStorage.setItem('user', JSON.stringify(res.user));
       navigation.navigate('StudentTabs');
     } catch (err: any) {

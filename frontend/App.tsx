@@ -3,6 +3,10 @@ import { NavigationContainer } from '@react-navigation/native';
 import { View, StyleSheet } from 'react-native';
 import RootNavigator, { navigationRef } from './src/navigation/RootNavigator';
 import { initializeDeepLinks } from './src/services/authService';
+import { Provider } from 'react-redux';
+import { store } from './store';
+import { SocketProvider } from './src/services/SocketContext';
+import { NotificationProvider } from './src/context/NotificationContext';
 
 // Create context for userRole
 export const UserRoleContext = React.createContext({
@@ -23,13 +27,19 @@ export default function App() {
   }, []);
 
   return (
-    <UserRoleContext.Provider value={{ userRole, setUserRole }}>
-      <View style={styles.container}>
-        <NavigationContainer ref={navigationRef}>
-          <RootNavigator userRole={userRole} />
-        </NavigationContainer>
-      </View>
-    </UserRoleContext.Provider>
+    <Provider store={store}>
+      <SocketProvider>
+        <NotificationProvider>
+          <UserRoleContext.Provider value={{ userRole, setUserRole }}>
+            <View style={styles.container}>
+              <NavigationContainer ref={navigationRef}>
+                <RootNavigator userRole={userRole} />
+              </NavigationContainer>
+            </View>
+          </UserRoleContext.Provider>
+        </NotificationProvider>
+      </SocketProvider>
+    </Provider>
   );
 }
 

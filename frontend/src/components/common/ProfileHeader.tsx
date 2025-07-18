@@ -5,21 +5,30 @@ interface ProfileHeaderProps {
   title: string;
   userName?: string;
   userImage?: string;
+  subtitle?: string;
 }
 
-const ProfileHeader = ({ title, userName, userImage }: ProfileHeaderProps) => {
+const ProfileHeader = ({ title, userName, userImage, subtitle }: ProfileHeaderProps) => {
+  const showUser = !!userName;
   return (
     <View style={styles.container}>
       <SafeAreaView style={styles.safeArea}>
-        <View style={styles.row}>
-          {userImage && (
-            <Image source={{ uri: userImage }} style={styles.avatar} />
-          )}
-          <View style={styles.textContainer}>
-            {userName && <Text style={styles.userName}>{userName}</Text>}
+        {showUser ? (
+          <View style={styles.row}>
+            {userImage && (
+              <Image source={{ uri: userImage }} style={styles.avatar} />
+            )}
+            <View style={styles.textContainer}>
+              <Text style={styles.userName}>{userName}</Text>
+              {subtitle && <Text style={styles.subtitle}>{subtitle}</Text>}
+              <Text style={styles.title}>{title}</Text>
+            </View>
+          </View>
+        ) : (
+          <View style={styles.centeredTitleRow}>
             <Text style={styles.title}>{title}</Text>
           </View>
-        </View>
+        )}
       </SafeAreaView>
     </View>
   );
@@ -71,5 +80,16 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: 'bold',
     color: '#000',
+  },
+  subtitle: {
+    fontSize: 14,
+    color: '#444',
+    marginBottom: 2,
+  },
+  centeredTitleRow: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    width: '100%',
   },
 });

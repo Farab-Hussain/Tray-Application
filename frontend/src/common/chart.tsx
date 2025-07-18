@@ -21,7 +21,10 @@ import {
   SendHorizontal,
 } from 'lucide-react-native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import useSocket from '../services/useSocket';
+import { useSocket } from '../services/SocketContext';
+import { sendMessageAPI } from '../services/chatService';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import api from '../services/api';
 
 type StudentStackParamList = {
   VoiceCallScreen: { name: string; image: string; roomId: string };
@@ -43,62 +46,77 @@ const Chart = () => {
     >
   >();
   const { name, image, role, email: otherUserEmail } = route.params;
-  const myUserEmail = null;
-  const roomId = [myUserEmail, otherUserEmail].sort().join('_');
-
-  const [messages, setMessages] = useState([
-    {
-      id: '1',
-      text: 'Hi there!',
-      sender: 'other',
-      timestamp: Date.now() - 60000,
-    },
-    {
-      id: '2',
-      text: 'Hello! How can I help you today?',
-      sender: 'me',
-      timestamp: Date.now() - 59000,
-    },
-    {
-      id: '3',
-      text: 'I have a few questions about the course.',
-      sender: 'other',
-      timestamp: Date.now() - 58000,
-    },
-    {
-      id: '4',
-      text: 'Sure, go ahead.',
-      sender: 'me',
-      timestamp: Date.now() - 57000,
-    },
-  ]);
+  const [myUserEmail, setMyUserEmail] = useState('');
+  const [messages, setMessages] = useState<any[]>([]);
   const [input, setInput] = useState('');
   const flatListRef = useRef<FlatList>(null);
   const [typing, setTyping] = useState(false);
-  const socket = useSocket();
+  const [isTypingLocal, setIsTypingLocal] = useState(false);
+  const { socket } = useSocket();
 
   useEffect(() => {
-    socket.on('receiveMessage', msg => {
-      setMessages(prev => [
-        ...prev,
-        {
-          ...msg,
-          sender: 'other',
-          id: msg.id || Date.now().toString(),
-          timestamp: msg.timestamp || Date.now(),
-          status: 'sent',
-        },
-      ]);
-      setTyping(false);
+    AsyncStorage.getItem('user').then(user => {
+      if (user) setMyUserEmail(JSON.parse(user).email);
     });
+  }, []);
+
+  const roomId = [myUserEmail, otherUserEmail].sort().join('_');
+
+  useEffect(() => {
+    if (roomId && myUserEmail) {
+      api.get(`/messages?roomId=${roomId}`).then(res => setMessages(res.data)).catch(() => setMessages([]));
+    }
+  }, [roomId, myUserEmail]);
+
+  useEffect(() => {
+    if (!socket) return;
+
+    // Receive new message
+    const handleReceiveMessage = (msg: any) => {
+      setMessages((prev) => [...prev, msg]);
+    };
+    socket.on('receiveMessage', handleReceiveMessage);
+
+    // Message delivered confirmation
+    const handleDelivered = (messageId: string) => {
+      setMessages((prev) =>
+        prev.map((msg) =>
+          (msg.id === messageId || msg._id === messageId)
+            ? { ...msg, status: 'delivered' } : msg
+        )
+      );
+    };
+    socket.on('messageDelivered', handleDelivered);
+
+    // Message read receipt
+    const handleRead = ({ messageId, reader }: { messageId: string; reader: string }) => {
+      setMessages((prev) =>
+        prev.map((msg) =>
+          (msg.id === messageId || msg._id === messageId)
+            ? { ...msg, readBy: [...(msg.readBy || []), reader] } : msg
+        )
+      );
+    };
+    socket.on('messageRead', handleRead);
+
+    // Typing
     socket.on('typing', () => setTyping(true));
     socket.on('stopTyping', () => setTyping(false));
+
     return () => {
-      socket.off('receiveMessage');
+      socket.off('receiveMessage', handleReceiveMessage);
+      socket.off('messageDelivered', handleDelivered);
+      socket.off('messageRead', handleRead);
       socket.off('typing');
       socket.off('stopTyping');
     };
   }, [socket]);
+
+  useEffect(() => {
+    if (socket && roomId) {
+      socket.emit('joinRoom', roomId);
+    }
+  }, [socket, roomId]);
 
   useEffect(() => {
     // Scroll to bottom on new message
@@ -107,40 +125,75 @@ const Chart = () => {
     }
   }, [messages]);
 
-  const sendMessage = () => {
-    if (input.trim()) {
+  // Listen for delivery and read receipts
+  useEffect(() => {
+    if (!socket) return;
+    const handleDelivered = (messageId: string) => {
+      // Optionally update UI to show message delivered
+      setMessages(prev => prev.map(m => (m._id === messageId ? { ...m, delivered: true } : m)));
+    };
+    const handleRead = ({ messageId, reader }: { messageId: string; reader: string }) => {
+      setMessages(prev => prev.map(m =>
+        m._id === messageId && !m.readBy?.includes(reader)
+          ? { ...m, readBy: [...(m.readBy || []), reader] }
+          : m
+      ));
+    };
+    socket.on('messageDelivered', handleDelivered);
+    socket.on('messageRead', handleRead);
+    return () => {
+      socket.off('messageDelivered', handleDelivered);
+      socket.off('messageRead', handleRead);
+    };
+  }, [socket]);
+
+  // Emit markAsRead for unread messages from others after messages update
+  useEffect(() => {
+    if (socket && messages.length && myUserEmail) {
+      messages.forEach(item => {
+        if (item.sender !== 'me' && !(item.readBy || []).includes(myUserEmail)) {
+          socket.emit('markAsRead', { messageId: item.id || item._id, reader: myUserEmail });
+        }
+      });
+    }
+  }, [messages, socket, myUserEmail]);
+
+  const sendMessage = async () => {
+    if (input.trim() && myUserEmail) {
       const msgObj = {
         id: Date.now().toString(),
         text: input,
-        sender: 'me',
+        sender: myUserEmail,
         timestamp: Date.now(),
         status: 'sending',
+        roomId,
       };
-      setMessages(prev => [...prev, msgObj]); // Optimistic update
-      socket.emit('sendMessage', msgObj);
+      setMessages(prev => [...prev, msgObj]);
+      if (socket) {
+        socket.emit('sendMessage', msgObj);
+      }
+      await sendMessageAPI(roomId, input, myUserEmail);
       setInput('');
-      socket.emit('stopTyping');
-      // Simulate confirmation after 500ms
-      setTimeout(() => {
-        setMessages(prev =>
-          prev.map(m => (m.id === msgObj.id ? { ...m, status: 'sent' } : m)),
-        );
-      }, 500);
+      setIsTypingLocal(false);
+      if (socket) socket.emit('stopTyping', roomId);
     }
   };
 
   // Typing indicator logic
   useEffect(() => {
     if (input) {
-      socket.emit('typing');
+      setIsTypingLocal(true);
+      socket?.emit('typing', roomId);
       const timeout = setTimeout(() => {
-        socket.emit('stopTyping');
+        setIsTypingLocal(false);
+        socket?.emit('stopTyping', roomId);
       }, 1500);
       return () => clearTimeout(timeout);
     } else {
-      socket.emit('stopTyping');
+      setIsTypingLocal(false);
+      socket?.emit('stopTyping', roomId);
     }
-  }, [input, socket]);
+  }, [input, socket, roomId]);
 
   const renderMessage = ({ item }: any) => {
     const isMe = item.sender === 'me';
@@ -155,6 +208,10 @@ const Chart = () => {
         <Text style={styles.statusText}>
           {isMe && item.status === 'sending'
             ? 'Sending...'
+            : isMe && item.status === 'delivered'
+            ? 'Delivered'
+            : isMe && item.readBy && item.readBy.length > 1
+            ? 'Read'
             : isMe
             ? 'Sent'
             : ''}
@@ -228,6 +285,13 @@ const Chart = () => {
           <View style={{ paddingHorizontal: 16, paddingBottom: 4 }}>
             <Text style={{ color: '#888', fontSize: 12 }}>
               User is typing...
+            </Text>
+          </View>
+        )}
+        {isTypingLocal && (
+          <View style={{ paddingHorizontal: 16, paddingBottom: 4 }}>
+            <Text style={{ color: '#888', fontSize: 12 }}>
+              You are typing...
             </Text>
           </View>
         )}

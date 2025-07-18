@@ -1,58 +1,41 @@
-import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, FlatList, Image } from 'react-native';
+import React from 'react';
+import { View, Text, StyleSheet, FlatList, Image, TouchableOpacity } from 'react-native';
 import SearchBar from '../components/common/SearchBar';
 import Header from '../components/common/Header';
-import api from '../services/api';
+import { useNotification } from '../context/NotificationContext';
 
 const Notification = () => {
-  const [notifications, setNotifications] = useState<any[]>([]);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    const fetchNotifications = async () => {
-      try {
-        const res = await api.get('/notification');
-        setNotifications(res.data);
-      } catch (e) {
-        setNotifications([]);
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchNotifications();
-  }, []);
+  const { notifications, markAsRead } = useNotification();
 
   const renderItem = ({ item }: any) => (
-    <View style={styles.notificationCard}>
-      <Image source={{ uri: item.image }} style={styles.avatar} />
-      <View style={styles.notificationText}>
-        <Text style={styles.name}>{item.name}</Text>
-        <View style={styles.messageRow}>
-          <Text style={styles.message}>{item.message}</Text>
-          <Text style={styles.time}>{item.time}</Text>
+    <TouchableOpacity onPress={() => markAsRead(item._id)}>
+      <View style={[styles.notificationCard, item.read && { backgroundColor: '#eee' }] }>
+        <Image source={{ uri: item.image }} style={styles.avatar} />
+        <View style={styles.notificationText}>
+          <Text style={styles.name}>{item.title || item.name}</Text>
+          <View style={styles.messageRow}>
+            <Text style={styles.message}>{item.message}</Text>
+            <Text style={styles.time}>{item.time || item.createdAt}</Text>
+          </View>
         </View>
       </View>
-    </View>
+    </TouchableOpacity>
   );
 
   return (
     <View style={styles.container}>
       <Header title="Notifications" />
-
-      {/* Search Bar */}
       <View style={styles.searchContainer}>
         <SearchBar />
       </View>
-
-      {/* Notification List */}
       <FlatList
         data={notifications}
-        keyExtractor={item => item.id}
+        keyExtractor={item => item._id}
         renderItem={renderItem}
         ItemSeparatorComponent={() => <View style={styles.separator} />}
         contentContainerStyle={styles.listContent}
         showsVerticalScrollIndicator={false}
-        ListEmptyComponent={loading ? <Text>Loading...</Text> : <Text>No notifications found.</Text>}
+        ListEmptyComponent={<Text>No notifications found.</Text>}
       />
     </View>
   );

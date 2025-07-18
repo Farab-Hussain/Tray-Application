@@ -39,17 +39,47 @@ const Home = () => {
   }, []);
 
   React.useEffect(() => {
-    const fetchServices = async () => {
-      try {
-        const res = await api.get('/services');
-        setServices(res.data);
-      } catch (e) {
-        setServices([]);
-      } finally {
-        setServicesLoading(false);
-      }
-    };
-    fetchServices();
+    // Temporary demo services
+    const demoServices = [
+      {
+        id: 1,
+        name: 'Business Strategy',
+        desc: 'Plan your business for success',
+        image: require('../../assets/images/services.png'),
+      },
+      {
+        id: 2,
+        name: 'Marketing Advice',
+        desc: 'Boost your brand visibility',
+        image: require('../../assets/images/services.png'),
+      },
+      {
+        id: 3,
+        name: 'Financial Planning',
+        desc: 'Manage your finances smartly',
+        image: require('../../assets/images/services.png'),
+      },
+      {
+        id: 4,
+        name: 'Health & Wellness',
+        desc: 'Consult for a healthy lifestyle',
+        image: require('../../assets/images/services.png'),
+      },
+      {
+        id: 5,
+        name: 'Career Coaching',
+        desc: 'Plan your career growth',
+        image: require('../../assets/images/services.png'),
+      },
+      {
+        id: 6,
+        name: 'Tech Solutions',
+        desc: 'Get expert tech guidance',
+        image: require('../../assets/images/services.png'),
+      },
+    ];
+    setServices(demoServices);
+    setServicesLoading(false);
   }, []);
 
   return (
@@ -58,6 +88,7 @@ const Home = () => {
         title="Pick a Consultant"
         userName={profile?.name}
         userImage={profile?.avatar}
+        subtitle="Start your productive day"
       />
       <ScrollView contentContainerStyle={styles.container}>
         <Text style={styles.title}>Top Consultant</Text>

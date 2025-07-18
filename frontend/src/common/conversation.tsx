@@ -10,72 +10,20 @@ import {
 import SearchBar from '../components/common/SearchBar';
 import { useNavigation } from '@react-navigation/native';
 import Header from '../components/common/Header';
-
-const activeUsers = [
-  {
-    id: '1',
-    name: 'Sarah',
-    image: 'https://randomuser.me/api/portraits/women/44.jpg',
-  },
-  {
-    id: '2',
-    name: 'Mike',
-    image: 'https://randomuser.me/api/portraits/men/34.jpg',
-  },
-  {
-    id: '3',
-    name: 'Emily',
-    image: 'https://randomuser.me/api/portraits/women/12.jpg',
-  },
-];
-
-const chatList = [
-  {
-    id: '1',
-    name: 'John Doe',
-    image: 'https://randomuser.me/api/portraits/men/1.jpg',
-    lastMessage: 'Hey, how are you doing?',
-    time: '2:15 PM',
-    unread: 3,
-  },
-  {
-    id: '2',
-    name: 'Jane Smith',
-    image: 'https://randomuser.me/api/portraits/women/2.jpg',
-    lastMessage: 'Meeting is postponed.',
-    time: '11:45 AM',
-    unread: 0,
-  },
-  {
-    id: '3',
-    name: 'Chris Evans',
-    image: 'https://randomuser.me/api/portraits/men/3.jpg',
-    lastMessage: 'Let’s catch up tomorrow.',
-    time: 'Yesterday',
-    unread: 1,
-  },
-];
+import api from '../services/api';
 
 const Conversation = () => {
   const navigation = useNavigation<any>();
+  const [chatList, setChatList] = React.useState<any[]>([]);
+  React.useEffect(() => {
+    api.get('/chats').then(res => setChatList(res.data)).catch(() => setChatList([]));
+  }, []);
   return (
     <View style={styles.container}>
       <Header title="Conversations" />
-
       <SearchBar />
-
-      <Text style={styles.sectionTitle}>Active Now</Text>
-      <View style={styles.activeContainer}>
-        {activeUsers.map(user => (
-          <Image
-            key={user.id}
-            source={{ uri: user.image }}
-            style={styles.activeAvatar}
-          />
-        ))}
-      </View>
+      {/* Optionally add active users here if available from API */}
       <Text style={styles.messagesLabel}>Messages</Text>
-
       <FlatList
         data={chatList}
         keyExtractor={item => item.id}
@@ -86,7 +34,8 @@ const Conversation = () => {
               navigation.navigate('chart', {
                 name: item.name,
                 image: item.image,
-                role: 'Senior Consultant', // Or dynamic role
+                role: item.role || 'Senior Consultant',
+                email: item.email,
               })
             }
           >
