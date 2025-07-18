@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   View,
   Text,
@@ -12,12 +12,8 @@ import { ChevronRight, User } from 'lucide-react-native';
 import { MessageCircle, Bell, HelpCircle, LogOut } from 'lucide-react-native';
 import { useNavigation } from '@react-navigation/native';
 import Header from '../components/common/Header';
+import api from '../services/api';
 // import { navigationRef } from '../../Navigation/RootNavigation';
-const profile = {
-  name: 'John Doe',
-  email: 'john.doe@example.com',
-  avatar: 'https://randomuser.me/api/portraits/men/32.jpg',
-};
 
 const menuItems = [
   {
@@ -54,6 +50,23 @@ const menuItems = [
 
 const Profile = () => {
   const navigation = useNavigation<any>();
+  const [profile, setProfile] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchProfile = async () => {
+      try {
+        const res = await api.get('/profile/me');
+        setProfile(res.data);
+      } catch (e) {
+        setProfile(null);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchProfile();
+  }, []);
+
   const handlePress = (key: string) => {
     switch (key) {
       case 'myCart':
@@ -100,9 +113,17 @@ const Profile = () => {
     <View style={styles.container}>
       <Header title="Profile" />
       <View style={styles.profileSection}>
-        <Image source={{ uri: profile.avatar }} style={styles.avatar} />
-        <Text style={styles.name}>{profile.name}</Text>
-        <Text style={styles.email}>{profile.email}</Text>
+        {loading ? (
+          <Text>Loading...</Text>
+        ) : profile ? (
+          <>
+            <Image source={{ uri: profile.avatar }} style={styles.avatar} />
+            <Text style={styles.name}>{profile.name}</Text>
+            <Text style={styles.email}>{profile.email}</Text>
+          </>
+        ) : (
+          <Text>Failed to load profile.</Text>
+        )}
       </View>
       <View style={styles.menuSection}>
         <FlatList
@@ -119,7 +140,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#fff',
-    paddingHorizontal: 24,
+    paddingHorizontal: 10,
     paddingTop: 48,
   },
   profileSection: {

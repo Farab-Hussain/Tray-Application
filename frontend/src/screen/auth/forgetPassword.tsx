@@ -14,15 +14,37 @@ import { useNavigation } from '@react-navigation/native';
 import Header from '../../components/common/Header';
 import AuthFooter from '../../components/auth/AuthFooter';
 import Button from '../../components/common/Button';
+import { forgotPassword } from '../../services/authService';
 
 const { width, height } = Dimensions.get('window');
 const SPACING = Math.max(16, width * 0.04);
 
 const ForgetPasswordScreen = () => {
   const [email, setEmail] = useState('');
+  const [error, setError] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
   const navigation = useNavigation();
 
-  const handleSendOtp = () => navigation.navigate('OTPScreen' as never);
+  const handleSendOtp = async () => {
+    setError(null);
+    if (!email) {
+      setError('Please enter your email address.');
+      return;
+    }
+    setLoading(true);
+    try {
+      await forgotPassword(email);
+      (navigation as any).navigate('OTPScreen', { email });
+    } catch (err: any) {
+      setError(
+        err?.response?.data?.message ||
+        err?.message ||
+        'Failed to send OTP. Please try again.'
+      );
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <KeyboardAvoidingView
@@ -59,13 +81,13 @@ const ForgetPasswordScreen = () => {
                 />
               </View>
               <Button
-                title="Send OTP"
-                onPress={() => {
-                  handleSendOtp();
-                }}
+                title={loading ? 'Sending...' : 'Send OTP'}
+                onPress={handleSendOtp}
+                disabled={loading}
                 customStyle={styles.button}
                 textStyle={styles.buttonText}
               />
+              {error && <Text style={{ color: 'red', marginTop: 10 }}>{error}</Text>}
             </ScrollView>
           </View>
 
@@ -92,10 +114,9 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   contentContainer: {
-    paddingHorizontal: Math.max(20, width * 0.05),
+    paddingHorizontal: 10,
     paddingTop: height * 0.04,
     paddingBottom: height * 0.04,
-    maxWidth: 400,
     width: '100%',
     alignSelf: 'center',
   },

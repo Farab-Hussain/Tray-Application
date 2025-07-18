@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   KeyboardAvoidingView,
   Platform,
@@ -6,74 +6,31 @@ import {
   SafeAreaView,
   FlatList,
   View,
+  Text,
 } from 'react-native';
 import Header from '../components/common/Header';
 import SearchBar from '../components/common/SearchBar';
 import ServicesCard from '../components/common/ServicesCard';
+import api from '../services/api';
 
-const servicesData = [
-  {
-    id: 1,
-    name: 'Service 1',
-    desc: 'Learn how to craft a professional resume that gets noticed by recruiters. 1',
-    image: require('../assets/images/services.png'),
-  },
-  {
-    id: 2,
-    name: 'Service 2',
-    desc: 'Learn how to craft a professional resume that gets noticed by recruiters. 2',
-    image: require('../assets/images/services.png'),
-  },
-  {
-    id: 3,
-    name: 'Service 3',
-    desc: 'Learn how to craft a professional resume that gets noticed by recruiters. 3',
-    image: require('../assets/images/services.png'),
-  },
-  {
-    id: 4,
-    name: 'Service 4',
-    desc: 'Learn how to craft a professional resume that gets noticed by recruiters. 4',
-    image: require('../assets/images/services.png'),
-  },
-  {
-    id: 5,
-    name: 'Service 5',
-    desc: 'Learn how to craft a professional resume that gets noticed by recruiters. 5',
-    image: require('../assets/images/services.png'),
-  },
-  {
-    id: 6,
-    name: 'Service 6',
-    desc: 'Learn how to craft a professional resume that gets noticed by recruiters. 6',
-    image: require('../assets/images/services.png'),
-  },
-  {
-    id: 7,
-    name: 'Service 7',
-    desc: 'Learn how to craft a professional resume that gets noticed by recruiters. 7',
-    image: require('../assets/images/services.png'),
-  },
-  {
-    id: 8,
-    name: 'Service 8',
-    desc: 'Learn how to craft a professional resume that gets noticed by recruiters. 8',
-    image: require('../assets/images/services.png'),
-  },
-  {
-    id: 9,
-    name: 'Service 9',
-    desc: 'Learn how to craft a professional resume that gets noticed by recruiters. 9',
-    image: require('../assets/images/services.png'),
-  },
-  {
-    id: 10,
-    name: 'Service 10',
-    desc: 'Learn how to craft a professional resume that gets noticed by recruiters. 10',
-    image: require('../assets/images/services.png'),
-  },
-];
-const services = () => {
+const Services = () => {
+  const [servicesData, setServicesData] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchServices = async () => {
+      try {
+        const res = await api.get('/services');
+        setServicesData(res.data);
+      } catch (e) {
+        setServicesData([]);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchServices();
+  }, []);
+
   return (
     <KeyboardAvoidingView
       style={styles.full}
@@ -97,13 +54,14 @@ const services = () => {
               image={item.image}
             />
           )}
+          ListEmptyComponent={loading ? <Text>Loading...</Text> : <Text>No services found.</Text>}
         />
       </SafeAreaView>
     </KeyboardAvoidingView>
   );
 };
 
-export default services;
+export default Services;
 
 const styles = StyleSheet.create({
   full: {
@@ -113,7 +71,7 @@ const styles = StyleSheet.create({
   main: {
     justifyContent: 'center',
     alignItems: 'center',
-    paddingHorizontal: 16,
+    paddingHorizontal: 10,
     paddingVertical: 24,
   },
   cardRow: {

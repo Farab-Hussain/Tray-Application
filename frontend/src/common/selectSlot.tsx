@@ -12,28 +12,30 @@ import Header from '../components/common/Header';
 import Button from '../components/common/Button';
 import { useNavigation } from '@react-navigation/native';
 import type { StackNavigationProp } from '@react-navigation/stack';
+import api from '../services/api';
 
 type RootStackParamList = {
   myCart: undefined;
   // add other routes if needed
 };
 
-const timeSlots = [
-  '09:00 AM',
-  '10:00 AM',
-  '11:00 AM',
-  '12:00 PM',
-  '02:00 PM',
-  '03:00 PM',
-  '04:00 PM',
-];
-
 const SelectSlot = () => {
   const [selectedDate, setSelectedDate] = useState('');
   const [selectedSlot, setSelectedSlot] = useState('');
+  const [timeSlots, setTimeSlots] = useState<string[]>([]);
+  const [loading, setLoading] = useState(false);
 
-  const onDateSelect = (day: any) => {
+  const onDateSelect = async (day: any) => {
     setSelectedDate(day.dateString);
+    setLoading(true);
+    try {
+      const res = await api.get(`/slot/available?date=${day.dateString}`);
+      setTimeSlots(res.data);
+    } catch (e) {
+      setTimeSlots([]);
+    } finally {
+      setLoading(false);
+    }
   };
 
   const buttonLabel = selectedDate && selectedSlot ? 'Book Now' : 'Book Now';
@@ -86,6 +88,7 @@ const SelectSlot = () => {
               </Text>
             </TouchableOpacity>
           )}
+          ListEmptyComponent={loading ? <Text>Loading...</Text> : <Text>No slots available.</Text>}
         />
       </View>
 
@@ -109,7 +112,8 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#fff',
-    padding: 16,
+    paddingHorizontal: 10,
+    paddingVertical: 16,
   },
   calendarWrapper: {
     marginHorizontal: 8,

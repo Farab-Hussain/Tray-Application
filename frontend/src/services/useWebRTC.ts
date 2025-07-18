@@ -7,8 +7,9 @@ import {
   mediaDevices,
 } from 'react-native-webrtc';
 import io from 'socket.io-client';
+import { SOCKET_URL } from './config';
 
-const SIGNALING_SERVER = 'http://192.168.110.56:5050'; // or your IP
+const SIGNALING_SERVER = SOCKET_URL;
 
 export const useWebRTC = (roomId: string) => {
   const [localStream, setLocalStream] = useState<any>(null);

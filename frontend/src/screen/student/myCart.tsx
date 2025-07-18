@@ -164,7 +164,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#fff',
-    padding: 20,
+    paddingHorizontal: 10,
     // Shadow for iOS
   },
   title: {
@@ -309,7 +309,6 @@ const styles = StyleSheet.create({
     padding: 16,
     marginBottom: 20,
     alignSelf: 'stretch',
-    width: '100%',
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.08,

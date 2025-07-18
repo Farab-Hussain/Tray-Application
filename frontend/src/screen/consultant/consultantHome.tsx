@@ -52,7 +52,7 @@ const styles = StyleSheet.create({
   container: {
     flexGrow: 1,
     justifyContent: 'flex-start',
-    padding: 20,
+    paddingHorizontal: 10,
     minHeight: '100%',
     alignItems: 'center',
     backgroundColor: 'white',
@@ -77,10 +77,10 @@ const styles = StyleSheet.create({
     marginBottom: 0,
   },
   flatListFullWidth: {
-    width: '100%',
+    // width: '100%', // Remove if parent already has width
   },
   centeredContent: {
-    width: '100%',
+    // width: '100%', // Remove if parent already has width
     alignItems: 'center',
     justifyContent: 'center',
   },

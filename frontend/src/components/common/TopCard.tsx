@@ -68,10 +68,10 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     shadowColor: '#000',
     flexDirection: 'row',
-    padding: Math.max(12, width * 0.03),
+    paddingHorizontal: 10,
+    paddingVertical: 8,
     justifyContent: 'space-between',
     alignItems: 'center',
-    gap: 10,
     shadowOffset: {
       width: 0,
       height: 2,

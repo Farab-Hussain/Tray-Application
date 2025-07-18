@@ -1,5 +1,6 @@
 import { io } from 'socket.io-client';
+import { SOCKET_URL } from './config';
 
-const socket = io('192.168.110.56'); // 👈 Change to your IP when testing on real device
+const socket = io(SOCKET_URL);
 
 export default socket;

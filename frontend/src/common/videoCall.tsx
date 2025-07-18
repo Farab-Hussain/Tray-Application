@@ -92,7 +92,7 @@ const VideoCall = () => {
 export default VideoCall;
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: 'black', alignItems: 'center', justifyContent: 'center', padding: 20 },
+  container: { flex: 1, backgroundColor: 'black', alignItems: 'center', justifyContent: 'center', paddingHorizontal: 10 },
   remoteVideo: { flex: 1, alignSelf: 'stretch' },
   remoteVideoPlaceholder: { flex: 1, alignSelf: 'stretch', backgroundColor: '#1E293B' },
   localVideo: {

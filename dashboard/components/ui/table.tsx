@@ -63,7 +63,7 @@ const Table: React.FC<DataTableProps> = ({ title, columns, data }) => {
                         colIdx === 0 ? "rounded-l-lg" : ""
                       } ${colIdx === columns.length - 1 ? "rounded-r-lg" : ""}`}
                     >
-                      {isServiceId ? (
+                      {colIdx === 0 ? (
                         <span className="flex items-center gap-2">
                           <Image
                             src="/id.svg"

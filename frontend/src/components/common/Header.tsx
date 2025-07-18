@@ -6,6 +6,7 @@ import {
   StyleSheet,
   TouchableOpacity,
 } from 'react-native';
+import { SPACING } from '../../theme/spacing';
 // import  from 'lucide-react-native'
 //  { ChevronRight } from 'lucide-react-native'
 import { ChevronLeft } from 'lucide-react-native';
@@ -45,9 +46,17 @@ const styles = StyleSheet.create({
     height: 50,
     width: '100%',
     backgroundColor: '#fff',
-    paddingHorizontal: 20,
+    paddingHorizontal: SPACING.horizontal,
   },
-  iconLeft: { position: 'absolute', left: 20, zIndex: 1 },
+  iconLeft: { 
+    position: 'absolute', 
+    left: SPACING.horizontal, 
+    zIndex: 1,
+    borderWidth: 1,
+    borderColor: '#e0e0e0',
+    borderRadius: 8,
+    padding: 4
+  },
   title: {
     fontSize: 18,
     fontWeight: 'bold',

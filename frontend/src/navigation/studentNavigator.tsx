@@ -7,13 +7,12 @@ import forgetPassword from '../screen/auth/forgetPassword';
 import Register from '../screen/auth/register';
 import OTPScreen from '../screen/auth/OTPScreen';
 import changePassword from '../screen/auth/changePassword';
-import profile from '../screen/student/home';
+import Home from '../screen/student/home';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { Menu, BookOpen, MessageCircle, Bell, User } from 'lucide-react-native';
-import services from '../common/services';
+import Services from '../common/services';
 import selectSlot from '../common/selectSlot';
 import MyCart from '../screen/student/myCart';
-import home from '../screen/student/home';
 import Profile from '../common/profile'; // adjust the import path if needed
 import Conversation from '../common/conversation';
 import Chart from '../common/chart';
@@ -54,12 +53,12 @@ function StudentTabNavigator() {
     >
       <Tab.Screen
         name="Menu"
-        component={home}
+        component={Home}
         options={{ title: 'Menu', headerShown: false }}
       />
       <Tab.Screen
         name="Courses"
-        component={services}
+        component={Services}
         options={{ title: 'Courses', headerShown: false }}
       />
       <Tab.Screen
@@ -116,7 +115,7 @@ const StudentNavigation = () => {
         options={{ headerShown: false }}
       />
       <Stack.Screen
-        name="forget Password"
+        name="forgetPassword"
         component={forgetPassword}
         options={{ headerShown: false }}
       />
@@ -137,7 +136,7 @@ const StudentNavigation = () => {
       />
       <Stack.Screen
         name="services"
-        component={services}
+        component={Services}
         options={{ headerShown: false }}
       />
       <Stack.Screen
@@ -152,7 +151,7 @@ const StudentNavigation = () => {
       />
       <Stack.Screen
         name="profile"
-        component={profile}
+        component={Home}
         options={{ headerShown: false }}
       />
       <Stack.Screen

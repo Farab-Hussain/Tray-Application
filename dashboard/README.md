@@ -1,36 +1,106 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Tray Admin Dashboard
+
+![Tray Dashboard](https://via.placeholder.com/800x400?text=Tray+Admin+Dashboard)
+
+## Overview
+
+The Tray Admin Dashboard is a powerful web application built with Next.js that provides comprehensive management tools for platform administrators and consultants. It offers intuitive interfaces for user management, service configuration, booking oversight, and detailed analytics.
+
+## Features
+
+### Admin Panel
+- **User Management**: Approve, suspend, or manage user accounts
+- **Consultant Verification**: Review and approve consultant applications
+- **Service Management**: Create, edit, and organize service categories
+- **Booking Oversight**: Monitor and manage all platform bookings
+- **Financial Tools**: Track earnings, manage commissions, and process payouts
+- **Analytics Dashboard**: Visualize platform metrics and performance
+- **Notification System**: Send broadcast messages to users
+
+### Consultant Portal
+- **Profile Management**: Update professional information and credentials
+- **Service Configuration**: Create and manage service offerings
+- **Availability Calendar**: Set and manage available time slots
+- **Booking Management**: View upcoming and past bookings
+- **Earnings Tracker**: Monitor income and commission details
+- **Performance Analytics**: View personal metrics and feedback
+
+## Technology Stack
+
+- **Framework**: Next.js (React)
+- **Language**: TypeScript
+- **Styling**: Tailwind CSS
+- **State Management**: React Context API
+- **Data Fetching**: SWR for efficient API requests
+- **Charts**: Chart.js for analytics visualization
+- **Forms**: React Hook Form with validation
+- **Authentication**: JWT-based auth with secure HTTP-only cookies
 
 ## Getting Started
 
-First, run the development server:
+### Prerequisites
+- Node.js (v18+)
+- Access to the Tray backend API
+
+### Installation
+
+1. Clone the repository
+2. Install dependencies:
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+cd dashboard
+npm install
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+3. Create a `.env.local` file based on `.env.example`
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+### Development
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```bash
+# Start development server
+npm run dev
+```
 
-## Learn More
+The dashboard will be available at [http://localhost:3000](http://localhost:3000)
 
-To learn more about Next.js, take a look at the following resources:
+### Production Build
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+```bash
+# Create production build
+npm run build
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+# Start production server
+npm start
+```
 
-## Deploy on Vercel
+## Project Structure
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+```
+dashboard/
+├── app/              # Next.js app directory
+│   ├── admin/        # Admin-specific pages
+│   ├── consultant/   # Consultant-specific pages
+│   ├── auth/         # Authentication pages
+│   └── api/          # API routes
+├── components/       # Reusable UI components
+│   ├── ui/           # Base UI components
+│   ├── forms/        # Form components
+│   ├── charts/       # Analytics components
+│   └── layout/       # Layout components
+├── hooks/            # Custom React hooks
+├── lib/              # Utility functions and services
+├── public/           # Static assets
+└── styles/           # Global styles
+```
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## Best Practices
+
+- Follow Next.js best practices for routing and data fetching
+- Use TypeScript for type safety
+- Implement responsive design for all screen sizes
+- Ensure accessibility compliance
+- Write unit tests for critical components
+
+## License
+
+MIT

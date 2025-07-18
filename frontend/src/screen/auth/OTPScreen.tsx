@@ -16,7 +16,8 @@ import { useNavigation } from '@react-navigation/native';
 import { ChevronLeft } from 'lucide-react-native';
 import AuthFooter from '../../components/auth/AuthFooter';
 import Button from '../../components/common/Button';
-// import axios from 'axios';
+import { verifyOtp, forgotPassword } from '../../services/authService';
+import { useRoute } from '@react-navigation/native';
 
 const { width, height } = Dimensions.get('window');
 const SPACING = Math.max(16, width * 0.04); // Responsive base spacing
@@ -25,6 +26,8 @@ const OTPScreen = () => {
   const [otp, setOtp] = useState(['', '', '', '']);
   const [resendTimer, setResendTimer] = useState(30);
   const [canResend, setCanResend] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
   const inputs: React.RefObject<RNTextInput | null>[] = [
     useRef<RNTextInput>(null),
     useRef<RNTextInput>(null),
@@ -32,8 +35,9 @@ const OTPScreen = () => {
     useRef<RNTextInput>(null),
   ];
   const navigation = useNavigation();
-  //   const route = useRoute<RouteProp<{ params: { email: string } }, 'params'>>();
-  //   const email = route.params.email;
+  const route = useRoute();
+  // @ts-ignore
+  const email = route.params?.email;
 
   useEffect(() => {
     let interval: any;
@@ -47,33 +51,50 @@ const OTPScreen = () => {
     return () => clearInterval(interval);
   }, [resendTimer]);
 
-  const handleResendCode = () => {
-    setResendTimer(30);
-    setCanResend(false);
-    // Add your resend logic here
+  const handleResendCode = async () => {
+    setError(null);
+    setLoading(true);
+    try {
+      await forgotPassword(email);
+      setResendTimer(30);
+      setCanResend(false);
+    } catch (err: any) {
+      setError(
+        err?.response?.data?.message ||
+        err?.message ||
+        'Failed to resend code. Please try again.'
+      );
+    } finally {
+      setLoading(false);
+    }
   };
 
   const handleGoBack = () => navigation.goBack();
-  //    const handleSignup = () => navigation.navigate('Signup' as never);
+  //    const handleRegister = () => navigation.navigate('Register' as never);
 
-  // TODO: Pass the correct email value to this function, e.g. via props or navigation params
-  //   const verifyOtp = async () => {
-  //     const otpCode = otp.join('');
-  //     if (otpCode.length !== 4) {
-  //       Alert.alert('Error', 'Please enter the 4-digit OTP');
-  //       return;
-  //     }
-  //     try {
-  //       const response = await axios.post('http://localhost:5050/api/auth/verifyOtp', { email, otp: otpCode });
-  //       if (response.status === 200 && response.data.message === "OTP verified successfully") {
-  //         (navigation.navigate as any)('ResetPassword', { otp: otpCode, email });
-  //       } else {
-  //         Alert.alert('Error', response.data.message || 'Incorrect OTP');
-  //       }
-  //     } catch (error: any) {
-  //       Alert.alert('Error', error.response?.data?.message || 'Incorrect OTP');
-  //     }
-  //   }
+  const handleVerifyOtp = async () => {
+    setError(null);
+    const otpCode = otp.join('');
+    if (otpCode.length !== 4) {
+      setError('Please enter the 4-digit OTP');
+      return;
+    }
+    if (!email) {
+      setError('Email is missing.');
+      return;
+    }
+    setLoading(true);
+    try {
+      await verifyOtp(email, otpCode);
+      (navigation as any).navigate('changePassword', { email, otp: otpCode });
+    } catch (err: any) {
+      setError(
+        err?.response?.data?.message || err?.message || 'Incorrect OTP'
+      );
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <KeyboardAvoidingView
@@ -102,7 +123,7 @@ const OTPScreen = () => {
           >
             <Text style={styles.title}>Please check your email</Text>
             <Text style={styles.description}>
-              We've sent a code to helloworld@gmail.com
+              We've sent a code to {email || 'your email'}
             </Text>
             <View style={styles.otpContainer}>
               {otp.map((digit, idx) => (
@@ -138,11 +159,13 @@ const OTPScreen = () => {
                 />
               ))}
             </View>
+            {error && <Text style={{ color: 'red', marginBottom: 10 }}>{error}</Text>}
             <Button
-              title="Verify"
-              onPress={() => navigation.navigate('changePassword' as never)}
+              title={loading ? 'Verifying...' : 'Verify'}
+              onPress={handleVerifyOtp}
               customStyle={styles.btn}
               textStyle={styles.btnText}
+              disabled={loading}
             />
             <View style={styles.resendContainer}>
               {canResend ? (
@@ -193,10 +216,9 @@ const styles = StyleSheet.create({
     marginLeft: 10,
   },
   contentContainer: {
-    paddingHorizontal: Math.max(20, width * 0.05),
+    paddingHorizontal: 10,
     paddingTop: height * 0.04,
     paddingBottom: height * 0.04,
-    maxWidth: 400,
     width: '100%',
     alignSelf: 'center',
   },
@@ -295,17 +317,17 @@ const styles = StyleSheet.create({
     color: 'black',
     textAlign: 'center',
   },
-  signupContainer: {
+  registerContainer: {
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'flex-end',
     marginTop: height * 0.4, // replaces 360 with a responsive value
   },
-  signupText: {
+  registerText: {
     fontSize: 14,
     color: 'gray',
   },
-  signupButton: {
+  registerButton: {
     fontSize: 14,
     color: 'black',
     fontWeight: '500',

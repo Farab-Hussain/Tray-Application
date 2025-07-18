@@ -18,12 +18,62 @@ import Button from '../../components/common/Button';
 import { CheckCircle, Eye, EyeOff } from 'lucide-react-native';
 import 'lucide-react-native';
 import Header from '../../components/common/Header';
+import { login as loginApi, googleLogin, facebookLogin, appleLogin } from '../../services/authService';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const { width, height } = Dimensions.get('window');
 const Login: React.FC<{ navigation: any }> = ({ navigation }) => {
-  const [email] = useState<string>('');
-  const [showPassword] = useState<boolean>(false);
+  const [email, setEmail] = useState<string>('');
+  const [password, setPassword] = useState<string>('');
+  const [showPassword, setShowPassword] = useState<boolean>(false);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   const isEmailValid = email.includes('@') && email.includes('.');
+
+  const handleLogin = async () => {
+    setError(null);
+    if (!email || !password) {
+      setError('Please enter both email and password.');
+      return;
+    }
+    setLoading(true);
+    try {
+      const res = await loginApi(email, password);
+      await AsyncStorage.setItem('token', res.token);
+      await AsyncStorage.setItem('user', JSON.stringify(res.user));
+      navigation.navigate('StudentTabs');
+    } catch (err: any) {
+      setError(err.response?.data?.message || err.message || 'Login failed.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleSocialLogin = async (provider: 'google' | 'facebook' | 'apple') => {
+    setError(null);
+    setLoading(true);
+    try {
+      if (provider === 'google') {
+        // TODO: Get idToken from Google SDK
+        const idToken = '';
+        await googleLogin(idToken);
+      } else if (provider === 'facebook') {
+        // TODO: Get accessToken and userID from Facebook SDK
+        const accessToken = '';
+        const userID = '';
+        await facebookLogin(accessToken, userID);
+      } else if (provider === 'apple') {
+        // TODO: Get identityToken from Apple SDK
+        const identityToken = '';
+        await appleLogin(identityToken);
+      }
+      navigation.navigate('StudentTabs');
+    } catch (err: any) {
+      setError(err.response?.data?.message || err.message || 'Social login failed.');
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <KeyboardAvoidingView
@@ -39,15 +89,15 @@ const Login: React.FC<{ navigation: any }> = ({ navigation }) => {
           >
             <View style={styles.contentContainer}>
               <Text style={styles.title}>Login</Text>
-
+              {error && <Text style={{ color: 'red', marginBottom: 10 }}>{error}</Text>}
               <View style={styles.formContainer}>
                 <Text style={styles.label}>Email</Text>
                 <View style={styles.inputWrapper}>
                   <TextInput
                     style={styles.inputField}
                     placeholder="Email"
-                    // value={email}
-                    // onChangeText={setEmail}
+                    value={email}
+                    onChangeText={setEmail}
                     keyboardType="email-address"
                     autoCapitalize="none"
                   />
@@ -61,12 +111,12 @@ const Login: React.FC<{ navigation: any }> = ({ navigation }) => {
                     <TextInput
                       style={styles.inputField}
                       placeholder="Password"
-                      // secureTextEntry={!showPassword}
-                      // value={password}
-                      // onChangeText={setPassword}
+                      secureTextEntry={!showPassword}
+                      value={password}
+                      onChangeText={setPassword}
                     />
                     <TouchableOpacity
-                      // onPress={() => setShowPassword(!showPassword)}
+                      onPress={() => setShowPassword(!showPassword)}
                       accessibilityRole="button"
                     >
                       {showPassword ? (
@@ -86,10 +136,11 @@ const Login: React.FC<{ navigation: any }> = ({ navigation }) => {
                 </View>
 
                 <Button
-                  title="Login"
-                  onPress={() => {}}
+                  title={loading ? 'Logging in...' : 'Login'}
+                  onPress={handleLogin}
                   customStyle={styles.button}
                   textStyle={styles.buttonText}
+                  disabled={loading}
                 />
               </View>
 
@@ -99,7 +150,7 @@ const Login: React.FC<{ navigation: any }> = ({ navigation }) => {
                   style={styles.dividerTextContainer}
                   accessibilityRole="button"
                 >
-                  <Text style={styles.dividerText}>or register with</Text>
+                  <Text style={styles.dividerText}>or login with</Text>
                 </TouchableOpacity>
                 <View style={styles.line} />
               </View>
@@ -108,6 +159,7 @@ const Login: React.FC<{ navigation: any }> = ({ navigation }) => {
                 <TouchableOpacity
                   style={styles.socialButton}
                   accessibilityRole="button"
+                  onPress={() => handleSocialLogin('facebook')}
                 >
                   <Image
                     source={require('../../assets/images/social-icon/facebook.png')}
@@ -117,6 +169,7 @@ const Login: React.FC<{ navigation: any }> = ({ navigation }) => {
                 <TouchableOpacity
                   style={styles.socialButton}
                   accessibilityRole="button"
+                  onPress={() => handleSocialLogin('google')}
                 >
                   <Image
                     source={require('../../assets/images/social-icon/google.png')}
@@ -126,6 +179,7 @@ const Login: React.FC<{ navigation: any }> = ({ navigation }) => {
                 <TouchableOpacity
                   style={styles.socialButton}
                   accessibilityRole="button"
+                  onPress={() => handleSocialLogin('apple')}
                 >
                   <Image
                     source={require('../../assets/images/social-icon/apple.png')}
@@ -139,8 +193,6 @@ const Login: React.FC<{ navigation: any }> = ({ navigation }) => {
               buttonLabel="Register"
               onPress={() => {
                 navigation.navigate('register');
-                // TODO: Navigate to login screen
-                console.log('Navigate to login');
               }}
             />
           </ScrollView>
@@ -159,6 +211,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'flex-start',
     backgroundColor: '#fff',
+    paddingHorizontal: 10,
   },
   scrollContainer: {
     flexGrow: 1,
@@ -299,16 +352,16 @@ const styles = StyleSheet.create({
     resizeMode: 'contain',
     alignSelf: 'center',
   },
-  signupContainer: {
+  registerContainer: {
     flexDirection: 'row',
     justifyContent: 'center',
     marginTop: 30,
   },
-  signupText: {
+  registerText: {
     fontSize: 14,
     color: 'gray',
   },
-  signupButton: {
+  registerButton: {
     fontSize: 14,
     color: 'black',
     fontWeight: '500',

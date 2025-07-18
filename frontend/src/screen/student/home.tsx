@@ -11,6 +11,8 @@ import {
 import ProfileHeader from '../../components/common/ProfileHeader';
 import TopCard from '../../components/common/TopCard';
 import RecommendedCard from '../../components/common/RecommendedCard';
+import ServicesCard from '../../components/common/ServicesCard';
+import api from '../../services/api';
 
 const consultantData = [
   { id: '1', name: 'John Deering', role: 'Consultant', rating: 4.8 },
@@ -19,10 +21,44 @@ const consultantData = [
   { id: '4', name: 'Emily White', role: 'Consultant', rating: 4.9 },
 ];
 
-const home = () => {
+const Home = () => {
+  const [profile, setProfile] = React.useState<any>(null);
+  const [services, setServices] = React.useState<any[]>([]);
+  const [servicesLoading, setServicesLoading] = React.useState(true);
+
+  React.useEffect(() => {
+    const fetchProfile = async () => {
+      try {
+        const res = await api.get('/profile/me');
+        setProfile(res.data);
+      } catch (e) {
+        setProfile(null);
+      }
+    };
+    fetchProfile();
+  }, []);
+
+  React.useEffect(() => {
+    const fetchServices = async () => {
+      try {
+        const res = await api.get('/services');
+        setServices(res.data);
+      } catch (e) {
+        setServices([]);
+      } finally {
+        setServicesLoading(false);
+      }
+    };
+    fetchServices();
+  }, []);
+
   return (
     <SafeAreaView style={styles.safeArea}>
-      <ProfileHeader title="Pick a Consultant" />
+      <ProfileHeader
+        title="Pick a Consultant"
+        userName={profile?.name}
+        userImage={profile?.avatar}
+      />
       <ScrollView contentContainerStyle={styles.container}>
         <Text style={styles.title}>Top Consultant</Text>
         <TopCard />
@@ -32,7 +68,6 @@ const home = () => {
             <Text style={styles.seeAllBtnText}>See all</Text>
           </TouchableOpacity>
         </View>
-
         <View style={styles.centeredContent}>
           <FlatList
             data={consultantData}
@@ -51,12 +86,36 @@ const home = () => {
             style={styles.flatListFullWidth}
           />
         </View>
+        {/* Services Section */}
+        <Text style={styles.title}>Services</Text>
+        {servicesLoading ? (
+          <Text>Loading services...</Text>
+        ) : services.length === 0 ? (
+          <Text>No services found.</Text>
+        ) : (
+          <FlatList
+            data={services}
+            keyExtractor={item => item.id.toString()}
+            numColumns={2}
+            columnWrapperStyle={styles.cardRow}
+            renderItem={({ item }) => (
+              <ServicesCard
+                name={item.name}
+                desc={item.desc}
+                image={item.image}
+              />
+            )}
+            contentContainerStyle={styles.flatListContentContainer}
+            showsVerticalScrollIndicator={false}
+            style={styles.flatListFullWidth}
+          />
+        )}
       </ScrollView>
     </SafeAreaView>
   );
 };
 
-export default home;
+export default Home;
 
 const styles = StyleSheet.create({
   safeArea: {
@@ -66,7 +125,7 @@ const styles = StyleSheet.create({
   container: {
     flexGrow: 1,
     justifyContent: 'flex-start',
-    padding: 20,
+    paddingHorizontal: 10,
     minHeight: '100%',
     alignItems: 'center',
     backgroundColor: 'white',
@@ -91,10 +150,10 @@ const styles = StyleSheet.create({
     marginBottom: 0,
   },
   flatListFullWidth: {
-    width: '100%',
+    // width: '100%', // Remove if parent already has width
   },
   centeredContent: {
-    width: '100%',
+    // width: '100%', // Remove if parent already has width
     alignItems: 'center',
     justifyContent: 'center',
   },

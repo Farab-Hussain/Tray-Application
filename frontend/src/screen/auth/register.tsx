@@ -13,17 +13,45 @@ import {
   Image,
 } from 'react-native';
 import { useState } from 'react';
+
 import AuthFooter from '../../components/auth/AuthFooter';
 import Button from '../../components/common/Button';
 import { CheckCircle, Eye, EyeOff } from 'lucide-react-native';
 import 'lucide-react-native';
 import Header from '../../components/common/Header';
+import { signup } from '../../services/authService';
 
 const { width, height } = Dimensions.get('window');
 const Register: React.FC<{ navigation: any }> = ({ navigation }) => {
-  const [email] = useState<string>('');
-  const [showPassword] = useState<boolean>(false);
+  const [name, setName] = useState<string>('');
+  const [email, setEmail] = useState<string>('');
+  const [password, setPassword] = useState<string>('');
+  const [showPassword, setShowPassword] = useState<boolean>(false);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   const isEmailValid = email.includes('@') && email.includes('.');
+
+  // Handle form submit
+  const handleSubmit = async () => {
+    setError(null);
+    if (!name || !email || !password) {
+      setError('Please enter your name, email, and password.');
+      return;
+    }
+    setLoading(true);
+    try {
+      await signup({ name, email, password, role: 'student' });
+      navigation.navigate('login');
+    } catch (err: any) {
+      setError(
+        err?.response?.data?.message ||
+        err?.message ||
+        'Registration failed. Please check your network and try again.'
+      );
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <KeyboardAvoidingView
@@ -39,17 +67,32 @@ const Register: React.FC<{ navigation: any }> = ({ navigation }) => {
           >
             <View style={styles.contentContainer}>
               <Text style={styles.title}>Register</Text>
-
+              {error && (
+                <Text style={{ color: 'red', marginBottom: 10 }}>{error}</Text>
+              )}
+              {/* Form start */}
               <View style={styles.formContainer}>
+                <Text style={styles.label}>Name</Text>
+                <View style={styles.inputWrapper}>
+                  <TextInput
+                    style={styles.inputField}
+                    placeholder="Name"
+                    value={name}
+                    onChangeText={setName}
+                    autoCapitalize="words"
+                    returnKeyType="next"
+                  />
+                </View>
                 <Text style={styles.label}>Email</Text>
                 <View style={styles.inputWrapper}>
                   <TextInput
                     style={styles.inputField}
                     placeholder="Email"
-                    // value={email}
-                    // onChangeText={setEmail}
+                    value={email}
+                    onChangeText={setEmail}
                     keyboardType="email-address"
                     autoCapitalize="none"
+                    returnKeyType="next"
                   />
                   {isEmailValid && (
                     <CheckCircle size={22} color="green" style={styles.icon} />
@@ -61,12 +104,14 @@ const Register: React.FC<{ navigation: any }> = ({ navigation }) => {
                     <TextInput
                       style={styles.inputField}
                       placeholder="Password"
-                      // secureTextEntry={!showPassword}
-                      // value={password}
-                      // onChangeText={setPassword}
+                      secureTextEntry={!showPassword}
+                      value={password}
+                      onChangeText={setPassword}
+                      returnKeyType="done"
+                      onSubmitEditing={handleSubmit}
                     />
                     <TouchableOpacity
-                      // onPress={() => setShowPassword(!showPassword)}
+                      onPress={() => setShowPassword(!showPassword)}
                       accessibilityRole="button"
                     >
                       {showPassword ? (
@@ -77,37 +122,15 @@ const Register: React.FC<{ navigation: any }> = ({ navigation }) => {
                     </TouchableOpacity>
                   </View>
                 </View>
-                <View style={styles.inputContainer}>
-                  <Text style={styles.label}>Password</Text>
-                  <View style={styles.inputWrapper}>
-                    <TextInput
-                      style={styles.inputField}
-                      placeholder="Password"
-                      // secureTextEntry={!showPassword}
-                      // value={password}
-                      // onChangeText={setPassword}
-                    />
-                    <TouchableOpacity
-                      // onPress={() => setShowPassword(!showPassword)}
-                      accessibilityRole="button"
-                    >
-                      {showPassword ? (
-                        <Eye size={22} color="gray" style={styles.icon} />
-                      ) : (
-                        <EyeOff size={22} color="gray" style={styles.icon} />
-                      )}
-                    </TouchableOpacity>
-                  </View>
-                </View>
-
                 <Button
-                  title="Sign up"
-                  onPress={() => {}}
+                  title={loading ? 'Signing up...' : 'Sign up'}
+                  onPress={handleSubmit}
+                  disabled={loading}
                   customStyle={styles.button}
                   textStyle={styles.buttonText}
                 />
               </View>
-
+              {/* Form end */}
               <View style={styles.dividerContainer}>
                 <View style={styles.line} />
                 <TouchableOpacity
@@ -118,11 +141,11 @@ const Register: React.FC<{ navigation: any }> = ({ navigation }) => {
                 </TouchableOpacity>
                 <View style={styles.line} />
               </View>
-
               <View style={styles.socialContainer}>
                 <TouchableOpacity
                   style={styles.socialButton}
                   accessibilityRole="button"
+                  // onPress={() => handleOAuthLogin('facebook')}
                 >
                   <Image
                     source={require('../../assets/images/social-icon/facebook.png')}
@@ -132,6 +155,7 @@ const Register: React.FC<{ navigation: any }> = ({ navigation }) => {
                 <TouchableOpacity
                   style={styles.socialButton}
                   accessibilityRole="button"
+                  // onPress={() => handleOAuthLogin('google')}
                 >
                   <Image
                     source={require('../../assets/images/social-icon/google.png')}
@@ -141,6 +165,7 @@ const Register: React.FC<{ navigation: any }> = ({ navigation }) => {
                 <TouchableOpacity
                   style={styles.socialButton}
                   accessibilityRole="button"
+                  // onPress={() => handleOAuthLogin('apple')}
                 >
                   <Image
                     source={require('../../assets/images/social-icon/apple.png')}
@@ -172,6 +197,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'flex-start',
     backgroundColor: '#fff',
+    paddingHorizontal: 10,
   },
   scrollContainer: {
     flexGrow: 1,
@@ -366,16 +392,16 @@ const styles = StyleSheet.create({
     resizeMode: 'contain',
     alignSelf: 'center',
   },
-  signupContainer: {
+  registerContainer: {
     flexDirection: 'row',
     justifyContent: 'center',
     marginTop: 30,
   },
-  signupText: {
+  registerText: {
     fontSize: 14,
     color: 'gray',
   },
-  signupButton: {
+  registerButton: {
     fontSize: 14,
     color: 'black',
     fontWeight: '500',

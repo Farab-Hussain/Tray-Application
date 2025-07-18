@@ -1,6 +1,5 @@
 "use client";
 import Table from "@/components/ui/table";
-import { ArrowDownNarrowWide, DotSquare } from "lucide-react";
 import React, { useState } from "react";
 
 const columns = [

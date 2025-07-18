@@ -9,13 +9,12 @@ import {
   Text,
   TextInput,
   View,
-  Alert,
 } from 'react-native';
 import { useNavigation, useRoute } from '@react-navigation/native';
-import axios from 'axios';
 import Header from '../../components/common/Header';
 import AuthFooter from '../../components/auth/AuthFooter';
 import AuthButton from '../../components/common/Button';
+import { resetPassword } from '../../services/authService';
 
 const { width, height } = Dimensions.get('window');
 const SPACING = Math.max(16, width * 0.04); // Responsive base spacing
@@ -23,32 +22,42 @@ const SPACING = Math.max(16, width * 0.04); // Responsive base spacing
 const ResetPasswordScreen = () => {
   const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
+  const [error, setError] = useState<string | null>(null);
+  const [success, setSuccess] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
   const navigation = useNavigation();
   const route = useRoute();
-  const { email, otp } = (route as any).params || {};
+  // @ts-ignore
+  const { email, otp } = route.params || {};
 
   const handleResetPassword = async () => {
-    if (!newPassword || !confirmPassword) {
-      Alert.alert('Error', 'Please fill in both password fields');
+    setError(null);
+    setSuccess(null);
+
+    if (!newPassword) {
+      setError('Please enter a new password.');
       return;
     }
     if (newPassword !== confirmPassword) {
-      Alert.alert('Error', 'Passwords do not match');
+      setError('Passwords do not match.');
       return;
     }
+
+    setLoading(true);
     try {
-      await axios.post('http://localhost:5050/api/auth/resetPassword', {
-        email,
-        otp,
-        newPassword,
-      });
-      Alert.alert('Success', 'Password has been reset');
-      navigation.navigate('Login' as never);
-    } catch (error: any) {
-      Alert.alert(
-        'Error',
-        error.response?.data?.message || 'Password reset failed',
+      await resetPassword(email, otp, newPassword);
+      setSuccess('Password reset successful!');
+      setTimeout(() => {
+        navigation.navigate('Login' as never);
+      }, 1500);
+    } catch (err: any) {
+      setError(
+        err?.response?.data?.message ||
+        err?.message ||
+        'Failed to reset password'
       );
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -94,11 +103,14 @@ const ResetPasswordScreen = () => {
                 accessibilityLabel="Confirm new password"
               />
             </View>
+            {error && <Text style={styles.errorText}>{error}</Text>}
+            {success && <Text style={styles.successText}>{success}</Text>}
             <AuthButton
-              title="Reset password"
+              title={loading ? 'Resetting...' : 'Reset password'}
               onPress={handleResetPassword}
               customStyle={styles.button}
               textStyle={styles.buttonText}
+              disabled={loading}
             />
           </ScrollView>
 
@@ -115,7 +127,6 @@ const ResetPasswordScreen = () => {
 };
 
 export default ResetPasswordScreen;
-
 const styles = StyleSheet.create({
   flexFullWhite: {
     flex: 1,
@@ -125,10 +136,9 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   contentContainer: {
-    paddingHorizontal: Math.max(20, width * 0.05),
+    paddingHorizontal: 10,
     paddingTop: height * 0.04,
     paddingBottom: height * 0.04,
-    maxWidth: 400,
     width: '100%',
     alignSelf: 'center',
   },
@@ -181,6 +191,18 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     lineHeight: Math.max(16, width * 0.04),
     color: 'black',
+    textAlign: 'center',
+  },
+  errorText: {
+    color: 'red',
+    fontSize: Math.max(14, width * 0.035),
+    marginTop: SPACING / 2,
+    textAlign: 'center',
+  },
+  successText: {
+    color: 'green',
+    fontSize: Math.max(14, width * 0.035),
+    marginTop: SPACING / 2,
     textAlign: 'center',
   },
 });
