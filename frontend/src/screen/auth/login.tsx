@@ -11,7 +11,7 @@ import {
   TextInput,
   Dimensions,
   Image,
-  Linking,
+  // Linking,
 } from 'react-native';
 import { useState } from 'react';
 import AuthFooter from '../../components/auth/AuthFooter';
@@ -20,6 +20,10 @@ import { CheckCircle, Eye, EyeOff } from 'lucide-react-native';
 import 'lucide-react-native';
 import Header from '../../components/common/Header';
 import { login as loginApi, googleLogin, facebookLogin, appleLogin } from '../../services/authService';
+// import AsyncStorage from '@react-native-async-storage/async-storage';
+import { navigationRef } from '../../navigation/RootNavigator';
+import { useContext } from 'react';
+import { UserRoleContext } from '../../../App';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const { width, height } = Dimensions.get('window');
@@ -30,6 +34,7 @@ const Login: React.FC<{ navigation: any }> = ({ navigation }) => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const isEmailValid = email.includes('@') && email.includes('.');
+  const { setUserRole } = useContext(UserRoleContext);
 
   const handleLogin = async () => {
     setError(null);
@@ -40,15 +45,36 @@ const Login: React.FC<{ navigation: any }> = ({ navigation }) => {
     setLoading(true);
     try {
       const res = await loginApi(email, password);
-      await AsyncStorage.setItem('auth_token', res.token);
-      await AsyncStorage.setItem('user', JSON.stringify(res.user));
-      if (res.user.role === 'consultant') {
-        Linking.openURL('http://localhost:3000');
-      } else {
-        navigation.navigate('StudentTabs');
+      const user = res.user;
+      if (!user) {
+        setError(res.message || 'Login failed. Please check your credentials.');
+        return;
       }
-    } catch (err: any) {
-      setError(err.response?.data?.message || err.message || 'Login failed.');
+      // Store user in AsyncStorage for later role checks
+      await AsyncStorage.setItem('user', JSON.stringify(user));
+      if (user.role === 'consultant') {
+        setUserRole('consultant');
+        navigationRef.reset({
+          index: 0,
+          routes: [{ name: 'ConsultantTabs' }],
+        });
+      } else if (user.role === 'student') {
+        setUserRole('student');
+        navigation.navigate('StudentTabs');
+      } else {
+        setError('Unknown user role.');
+      }
+    } catch (err) {
+      if (err && typeof err === 'object') {
+        // Try to extract error message safely
+        const errorMessage =
+          (err as any)?.response?.data?.message ||
+          (err as any)?.message ||
+          'Login failed.';
+        setError(errorMessage);
+      } else {
+        setError('Login failed.');
+      }
     } finally {
       setLoading(false);
     }

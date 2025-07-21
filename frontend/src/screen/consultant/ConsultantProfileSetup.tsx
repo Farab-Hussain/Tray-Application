@@ -14,9 +14,9 @@ export default function ConsultantProfileSetup() {
       await api.post('/consultants/profile', {
         bio,
         skills: skills.split(','),
-        certifications: certifications.split(',')
+        certifications: certifications.split(','),
       });
-      navigation.navigate('ConsultantServiceApplication');
+      navigation.navigate('ConsultantServiceApplication' as never);
     } catch (err) {
       console.error(err);
     }
@@ -25,9 +25,24 @@ export default function ConsultantProfileSetup() {
   return (
     <View style={styles.container}>
       <Text>Consultant Profile Setup</Text>
-      <TextInput placeholder="Bio" value={bio} onChangeText={setBio} style={styles.input} />
-      <TextInput placeholder="Skills (comma-separated)" value={skills} onChangeText={setSkills} style={styles.input} />
-      <TextInput placeholder="Certifications (comma-separated)" value={certifications} onChangeText={setCertifications} style={styles.input} />
+      <TextInput
+        placeholder="Bio"
+        value={bio}
+        onChangeText={setBio}
+        style={styles.input}
+      />
+      <TextInput
+        placeholder="Skills (comma-separated)"
+        value={skills}
+        onChangeText={setSkills}
+        style={styles.input}
+      />
+      <TextInput
+        placeholder="Certifications (comma-separated)"
+        value={certifications}
+        onChangeText={setCertifications}
+        style={styles.input}
+      />
       <Button title="Next" onPress={handleSubmit} />
     </View>
   );
@@ -35,5 +50,5 @@ export default function ConsultantProfileSetup() {
 
 const styles = StyleSheet.create({
   container: { padding: 20 },
-  input: { borderWidth: 1, marginVertical: 10, padding: 8, borderRadius: 5 }
-}); 
+  input: { borderWidth: 1, marginVertical: 10, padding: 8, borderRadius: 5 },
+});

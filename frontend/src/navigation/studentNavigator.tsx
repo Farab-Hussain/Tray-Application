@@ -20,15 +20,9 @@ import Notification from '../common/notification';
 import Call from '../common/call';
 import VideoCall from '../common/videoCall';
 import review from '../screen/student/review';
-import { Alert, TouchableOpacity, View, Text } from 'react-native';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
-
-function LogoutTab() {
-  return null;
-}
 
 function StudentTabNavigator() {
   return (
@@ -36,7 +30,7 @@ function StudentTabNavigator() {
       screenOptions={({ route }) => ({
         tabBarIcon: ({ size, color }) => {
           if (route.name === 'Menu') return <Menu size={size} color={color} />;
-          if (route.name === 'Courses')
+          if (route.name === 'Services')
             return <BookOpen size={size} color={color} />;
           if (route.name === 'Message')
             return <MessageCircle size={size} color={color} />;
@@ -65,9 +59,9 @@ function StudentTabNavigator() {
         options={{ title: 'Menu', headerShown: false }}
       />
       <Tab.Screen
-        name="Courses"
+        name="Services"
         component={Services}
-        options={{ title: 'Courses', headerShown: false }}
+        options={{ title: 'Services', headerShown: false }}
       />
       <Tab.Screen
         name="Message"
@@ -84,45 +78,7 @@ function StudentTabNavigator() {
         component={Profile}
         options={{ title: 'Account', headerShown: false }}
       />
-      <Tab.Screen
-        name="Logout"
-        component={LogoutTab}
-        options={{
-          title: 'Logout',
-          headerShown: false,
-          tabBarButton: props => <LogoutButton {...props} />,
-        }}
-      />
     </Tab.Navigator>
-  );
-}
-
-function LogoutButton(props: any) {
-  const navigation = props.navigation;
-  return (
-    <TouchableOpacity
-      {...props}
-      onPress={() => {
-        Alert.alert('Logout', 'Are you sure you want to logout?', [
-          { text: 'Cancel', style: 'cancel' },
-          {
-            text: 'Yes',
-            style: 'destructive',
-            onPress: async () => {
-              await AsyncStorage.clear();
-              navigation.navigate('login');
-            },
-          },
-        ]);
-      }}
-    >
-      <View style={{ alignItems: 'center', justifyContent: 'center', flex: 1 }}>
-        <User size={24} color="#187D22" />
-        <Text style={{ fontSize: 12, color: '#187D22', marginBottom: 2 }}>
-          Logout
-        </Text>
-      </View>
-    </TouchableOpacity>
   );
 }
 

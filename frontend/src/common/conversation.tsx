@@ -10,14 +10,44 @@ import {
 import SearchBar from '../components/common/SearchBar';
 import { useNavigation } from '@react-navigation/native';
 import Header from '../components/common/Header';
-import api from '../services/api';
+
+const demoConversations = [
+  {
+    id: '1',
+    name: 'John Deering',
+    image: require('../assets/images/consultant.png'),
+    lastMessage: 'See you at 2pm!',
+    time: '10:30 AM',
+    unread: 2,
+    email: 'john@example.com',
+    role: 'Consultant',
+  },
+  {
+    id: '2',
+    name: 'Jane Smith',
+    image: require('../assets/images/consultant.png'),
+    lastMessage: 'Thank you for your help!',
+    time: 'Yesterday',
+    unread: 0,
+    email: 'jane@example.com',
+    role: 'Consultant',
+  },
+  {
+    id: '3',
+    name: 'Alex Brown',
+    image: require('../assets/images/consultant.png'),
+    lastMessage: 'Let me know if you have questions.',
+    time: '2 days ago',
+    unread: 1,
+    email: 'alex@example.com',
+    role: 'Consultant',
+  },
+];
 
 const Conversation = () => {
   const navigation = useNavigation<any>();
-  const [chatList, setChatList] = React.useState<any[]>([]);
-  React.useEffect(() => {
-    api.get('/chats').then(res => setChatList(res.data)).catch(() => setChatList([]));
-  }, []);
+  // Remove backend logic
+  const chatList = demoConversations;
   return (
     <View style={styles.container}>
       <Header title="Conversations" />
@@ -31,7 +61,7 @@ const Conversation = () => {
           <TouchableOpacity
             style={styles.chatRow}
             onPress={() =>
-              navigation.navigate('chart', {
+              navigation.navigate('Chart', {
                 name: item.name,
                 image: item.image,
                 role: item.role || 'Senior Consultant',

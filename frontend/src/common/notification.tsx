@@ -2,10 +2,46 @@ import React from 'react';
 import { View, Text, StyleSheet, FlatList, Image, TouchableOpacity } from 'react-native';
 import SearchBar from '../components/common/SearchBar';
 import Header from '../components/common/Header';
-import { useNotification } from '../context/NotificationContext';
+
+const demoNotifications = [
+  {
+    _id: '1',
+    title: 'Booking Confirmed',
+    message: 'Your booking for Career Counselling is confirmed.',
+    time: '10:30 AM',
+    image: require('../assets/images/consultant.png'),
+    read: false,
+  },
+  {
+    _id: '2',
+    title: 'New Message',
+    message: 'You have received a new message from your consultant.',
+    time: '9:15 AM',
+    image: require('../assets/images/consultant.png'),
+    read: true,
+  },
+  {
+    _id: '3',
+    title: 'Slot Reminder',
+    message: 'Your session starts in 30 minutes.',
+    time: 'Yesterday',
+    image: require('../assets/images/consultant.png'),
+    read: false,
+  },
+  {
+    _id: '4',
+    title: 'Payment Received',
+    message: 'Your payment for Interview Preparation is successful.',
+    time: '2 days ago',
+    image: require('../assets/images/consultant.png'),
+    read: true,
+  },
+];
 
 const Notification = () => {
-  const { notifications, markAsRead } = useNotification();
+  // Remove useNotification and backend logic
+  const notifications = demoNotifications;
+  const markAsRead = (_id: string) => {};
 
   const renderItem = ({ item }: any) => (
     <TouchableOpacity onPress={() => markAsRead(item._id)}>

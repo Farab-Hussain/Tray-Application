@@ -6,141 +6,83 @@ import {
   ScrollView,
   View,
   FlatList,
-  TouchableOpacity,
 } from 'react-native';
 import ProfileHeader from '../../components/common/ProfileHeader';
 import TopCard from '../../components/common/TopCard';
 import RecommendedCard from '../../components/common/RecommendedCard';
-import ServicesCard from '../../components/common/ServicesCard';
-import api from '../../services/api';
+import { useUserStore } from '../../services/authService';
+import { getAllConsultants } from '../../services/api';
 
-const consultantData = [
-  { id: '1', name: 'John Deering', role: 'Consultant', rating: 4.8 },
-  { id: '2', name: 'Jane Smith', role: 'Consultant', rating: 4.5 },
-  { id: '3', name: 'Alex Brown', role: 'Consultant', rating: 4.7 },
-  { id: '4', name: 'Emily White', role: 'Consultant', rating: 4.9 },
-];
+// Remove demoConsultants, use backend data
 
 const Home = () => {
-  const [profile, setProfile] = React.useState<any>(null);
-  const [services, setServices] = React.useState<any[]>([]);
-  const [servicesLoading, setServicesLoading] = React.useState(true);
+  // Remove all backend logic
+  const [consultants, setConsultants] = React.useState<any[]>([]);
+  const [loadingConsultants, setLoadingConsultants] = React.useState(true);
+  const [errorConsultants, setErrorConsultants] = React.useState<string | null>(
+    null,
+  );
 
   React.useEffect(() => {
-    const fetchProfile = async () => {
+    const fetchConsultants = async () => {
       try {
-        const res = await api.get('/profile/me');
-        setProfile(res.data);
-      } catch (e) {
-        setProfile(null);
+        setLoadingConsultants(true);
+        const data = await getAllConsultants();
+        setConsultants(data);
+      } catch (err) {
+        setErrorConsultants('Failed to load consultants');
+      } finally {
+        setLoadingConsultants(false);
       }
     };
-    fetchProfile();
+    fetchConsultants();
   }, []);
 
-  React.useEffect(() => {
-    // Temporary demo services
-    const demoServices = [
-      {
-        id: 1,
-        name: 'Business Strategy',
-        desc: 'Plan your business for success',
-        image: require('../../assets/images/services.png'),
-      },
-      {
-        id: 2,
-        name: 'Marketing Advice',
-        desc: 'Boost your brand visibility',
-        image: require('../../assets/images/services.png'),
-      },
-      {
-        id: 3,
-        name: 'Financial Planning',
-        desc: 'Manage your finances smartly',
-        image: require('../../assets/images/services.png'),
-      },
-      {
-        id: 4,
-        name: 'Health & Wellness',
-        desc: 'Consult for a healthy lifestyle',
-        image: require('../../assets/images/services.png'),
-      },
-      {
-        id: 5,
-        name: 'Career Coaching',
-        desc: 'Plan your career growth',
-        image: require('../../assets/images/services.png'),
-      },
-      {
-        id: 6,
-        name: 'Tech Solutions',
-        desc: 'Get expert tech guidance',
-        image: require('../../assets/images/services.png'),
-      },
-    ];
-    setServices(demoServices);
-    setServicesLoading(false);
-  }, []);
+  const userName = useUserStore(state =>
+    state.email ? state.email.split('@')[0] : 'Student',
+  );
+  const userImage = undefined; // Replace with actual image if available
 
   return (
-    <SafeAreaView style={styles.safeArea}>
+    <SafeAreaView style={styles.container}>
       <ProfileHeader
-        title="Pick a Consultant"
-        userName={profile?.name}
-        userImage={profile?.avatar}
-        subtitle="Start your productive day"
+        title="Home"
+        userName={userName}
+        userImage={userImage || require('../../assets/images/consultant.png')}
+        subtitle="start your productive day"
       />
-      <ScrollView contentContainerStyle={styles.container}>
-        <Text style={styles.title}>Top Consultant</Text>
-        <TopCard />
-        <View style={styles.consultantRow}>
-          <Text style={styles.consultantTitle}>Consultants</Text>
-          <TouchableOpacity onPress={() => {}} style={styles.seeAllBtn}>
-            <Text style={styles.seeAllBtnText}>See all</Text>
-          </TouchableOpacity>
+      <ScrollView>
+        <View style={{ paddingHorizontal: 12 }}>
+          <TopCard />
         </View>
-        <View style={styles.centeredContent}>
-          <FlatList
-            data={consultantData}
-            keyExtractor={item => item.id}
-            numColumns={2}
-            columnWrapperStyle={styles.cardRow}
-            renderItem={({ item }) => (
-              <RecommendedCard
-                name={item.name}
-                role={item.role}
-                rating={item.rating}
-              />
-            )}
-            contentContainerStyle={styles.flatListContentContainer}
-            showsVerticalScrollIndicator={false}
-            style={styles.flatListFullWidth}
-          />
+        <View style={styles.sectionConsultants}>
+          <Text style={styles.sectionTitle}>Consultants</Text>
+          {loadingConsultants ? (
+            <Text>Loading consultants...</Text>
+          ) : errorConsultants ? (
+            <Text style={{ color: 'red' }}>{errorConsultants}</Text>
+          ) : (
+            <FlatList
+              data={consultants}
+              renderItem={({ item }) => (
+                <RecommendedCard
+                  name={item.name || item.fullName || item.email}
+                  role={item.role || 'Consultant'}
+                  rating={item.rating || 0}
+                  consultantId={item._id}
+                />
+              )}
+              keyExtractor={item =>
+                item._id?.toString?.() || Math.random().toString()
+              }
+              numColumns={2}
+              columnWrapperStyle={styles.consultantRow}
+              contentContainerStyle={styles.consultantListContent}
+              showsVerticalScrollIndicator={false}
+              ListEmptyComponent={<Text>No consultants found.</Text>}
+            />
+          )}
         </View>
-        {/* Services Section */}
-        <Text style={styles.title}>Services</Text>
-        {servicesLoading ? (
-          <Text>Loading services...</Text>
-        ) : services.length === 0 ? (
-          <Text>No services found.</Text>
-        ) : (
-          <FlatList
-            data={services}
-            keyExtractor={item => item.id.toString()}
-            numColumns={2}
-            columnWrapperStyle={styles.cardRow}
-            renderItem={({ item }) => (
-              <ServicesCard
-                name={item.name}
-                desc={item.desc}
-                image={item.image}
-              />
-            )}
-            contentContainerStyle={styles.flatListContentContainer}
-            showsVerticalScrollIndicator={false}
-            style={styles.flatListFullWidth}
-          />
-        )}
       </ScrollView>
     </SafeAreaView>
   );
@@ -197,12 +139,9 @@ const styles = StyleSheet.create({
     marginTop: 6,
   },
   consultantRow: {
-    flexDirection: 'row',
     justifyContent: 'space-between',
-    alignItems: 'center',
-    width: '100%',
-    marginTop: 6,
-    marginBottom: 6,
+    marginBottom: 4,
+    columnGap: 8, // Reduce center gap
   },
   consultantTitle: {
     color: '#000',
@@ -222,5 +161,25 @@ const styles = StyleSheet.create({
   },
   flatListContentContainer: {
     paddingBottom: 20,
+  },
+  section: {
+    width: '100%',
+    marginTop: 10,
+    marginBottom: 10,
+  },
+  sectionConsultants: {
+    width: '100%',
+    marginTop: 10,
+    marginBottom: 10,
+    paddingHorizontal: 12, // Equal left/right spacing
+  },
+  consultantListContent: {
+    paddingBottom: 10,
+  },
+  sectionTitle: {
+    color: '#000',
+    fontSize: 18,
+    fontWeight: 'bold',
+    marginBottom: 10,
   },
 });

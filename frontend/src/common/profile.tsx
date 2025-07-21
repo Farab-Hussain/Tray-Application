@@ -1,18 +1,15 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import {
   View,
   Text,
   StyleSheet,
-  Image,
   TouchableOpacity,
   FlatList,
-  Alert,
 } from 'react-native';
 import { ChevronRight, User } from 'lucide-react-native';
 import { MessageCircle, Bell, HelpCircle, LogOut } from 'lucide-react-native';
 import { useNavigation } from '@react-navigation/native';
 import Header from '../components/common/Header';
-import api from '../services/api';
 // import { navigationRef } from '../../Navigation/RootNavigation';
 
 const menuItems = [
@@ -50,22 +47,8 @@ const menuItems = [
 
 const Profile = () => {
   const navigation = useNavigation<any>();
-  const [profile, setProfile] = useState<any>(null);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    const fetchProfile = async () => {
-      try {
-        const res = await api.get('/profile/me');
-        setProfile(res.data);
-      } catch (e) {
-        setProfile(null);
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchProfile();
-  }, []);
+  // Remove all backend logic
+  // const [profile] = useState<any>(null);
 
   const handlePress = (key: string) => {
     switch (key) {
@@ -85,14 +68,14 @@ const Profile = () => {
         navigation.navigate('Help');
         break;
       case 'logout':
-        Alert.alert('Logout', 'Are you sure you want to logout?', [
-          { text: 'Cancel', style: 'cancel' },
-          {
-            text: 'Yes',
-            style: 'destructive',
-            onPress: () => navigation.replace('Login'),
-          },
-        ]);
+        // Alert.alert('Logout', 'Are you sure you want to logout?', [
+        //   { text: 'Cancel', style: 'cancel' },
+        //   {
+        //     text: 'Yes',
+        //     style: 'destructive',
+        //     onPress: () => navigation.replace('Login'),
+        //   },
+        // ]);
         break;
       default:
         break;
@@ -113,17 +96,7 @@ const Profile = () => {
     <View style={styles.container}>
       <Header title="Profile" />
       <View style={styles.profileSection}>
-        {loading ? (
-          <Text>Loading...</Text>
-        ) : profile ? (
-          <>
-            <Image source={{ uri: profile.avatar }} style={styles.avatar} />
-            <Text style={styles.name}>{profile.name}</Text>
-            <Text style={styles.email}>{profile.email}</Text>
-          </>
-        ) : (
-          <Text>Failed to load profile.</Text>
-        )}
+        <Text style={styles.name}>No profile data (backend disabled).</Text>
       </View>
       <View style={styles.menuSection}>
         <FlatList

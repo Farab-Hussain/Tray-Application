@@ -3,12 +3,10 @@ import { NavigationContainer } from '@react-navigation/native';
 import { View, StyleSheet, ActivityIndicator, Linking } from 'react-native';
 import RootNavigator, { navigationRef } from './src/navigation/RootNavigator';
 // import { initializeDeepLinks } from './src/services/authService';
-import { Provider, useDispatch } from 'react-redux';
-import { store } from './store';
 import { SocketProvider } from './src/services/SocketContext';
 import { NotificationProvider } from './src/context/NotificationContext';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { setEmail } from './store';
+import { useUserStore } from './src/services/authService';
 
 // Create context for userRole
 export const UserRoleContext = React.createContext({
@@ -18,7 +16,7 @@ export const UserRoleContext = React.createContext({
 
 function AuthLoader({ children }: { children: React.ReactNode }) {
   const [isAuthReady, setIsAuthReady] = useState(false);
-  const dispatch = useDispatch();
+  const setEmail = useUserStore((state: { setEmail: (email: string) => void }) => state.setEmail);
 
   useEffect(() => {
     const restoreAuth = async () => {
@@ -27,14 +25,13 @@ function AuthLoader({ children }: { children: React.ReactNode }) {
       if (token && user) {
         const parsedUser = JSON.parse(user);
         if (parsedUser.email) {
-          dispatch(setEmail(parsedUser.email));
+          setEmail(parsedUser.email);
         }
-      } else {
       }
       setIsAuthReady(true);
     };
     restoreAuth();
-  }, [dispatch]);
+  }, [setEmail]);
 
   if (!isAuthReady) {
     return (
@@ -68,21 +65,19 @@ export default function App() {
   }, []);
 
   return (
-    <Provider store={store}>
-      <SocketProvider>
-        <NotificationProvider>
-          <AuthLoader>
-            <UserRoleContext.Provider value={{ userRole, setUserRole }}>
-              <View style={styles.container}>
-                <NavigationContainer ref={navigationRef}>
-                  <RootNavigator userRole={userRole} />
-                </NavigationContainer>
-              </View>
-            </UserRoleContext.Provider>
-          </AuthLoader>
-        </NotificationProvider>
-      </SocketProvider>
-    </Provider>
+    <SocketProvider>
+      <NotificationProvider>
+        <AuthLoader>
+          <UserRoleContext.Provider value={{ userRole, setUserRole }}>
+            <View style={styles.container}>
+              <NavigationContainer ref={navigationRef}>
+                <RootNavigator userRole={userRole} />
+              </NavigationContainer>
+            </View>
+          </UserRoleContext.Provider>
+        </AuthLoader>
+      </NotificationProvider>
+    </SocketProvider>
   );
 }
 

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import {
   KeyboardAvoidingView,
   Platform,
@@ -11,25 +11,46 @@ import {
 import Header from '../components/common/Header';
 import SearchBar from '../components/common/SearchBar';
 import ServicesCard from '../components/common/ServicesCard';
-import api from '../services/api';
+import { getAllServices, getConsultantServices } from '../services/api';
+import { useRoute } from '@react-navigation/native';
 
 const Services = () => {
   const [servicesData, setServicesData] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const route = useRoute();
+  // @ts-ignore
+  const { consultantId } = route.params || {};
 
-  useEffect(() => {
+  React.useEffect(() => {
     const fetchServices = async () => {
       try {
-        const res = await api.get('/services');
-        setServicesData(res.data);
-      } catch (e) {
-        setServicesData([]);
+        setLoading(true);
+        let data = [];
+        if (consultantId) {
+          data = await getConsultantServices(consultantId);
+        } else {
+          data = await getAllServices(); // Fetch all services
+        }
+        setServicesData(data);
+        console.log('Fetched services:', data);
+      } catch (err) {
+        console.error('Error fetching services:', err);
+        if (err && typeof err === 'object' && 'response' in err && (err as any).response) {
+          console.error('API error response:', (err as any).response);
+          setError(
+            'Failed to load services: ' +
+            ((err as any).response?.data?.message || JSON.stringify((err as any).response?.data) || (err as any).message || 'Unknown error')
+          );
+        } else {
+          setError('Failed to load services');
+        }
       } finally {
         setLoading(false);
       }
     };
     fetchServices();
-  }, []);
+  }, [consultantId]);
 
   return (
     <KeyboardAvoidingView
@@ -41,21 +62,31 @@ const Services = () => {
         <View style={styles.searchBarWrapper}>
           <SearchBar style={styles.searchBar} />
         </View>
-        <FlatList
-          data={servicesData.slice(0, 6)}
-          keyExtractor={item => item.id.toString()}
-          numColumns={2}
-          columnWrapperStyle={styles.cardRow}
-          contentContainerStyle={styles.flatListContentContainer}
-          renderItem={({ item }) => (
-            <ServicesCard
-              name={item.name}
-              desc={item.desc}
-              image={item.image}
-            />
-          )}
-          ListEmptyComponent={loading ? <Text>Loading...</Text> : <Text>No services found.</Text>}
-        />
+        {loading ? (
+          <Text>Loading services...</Text>
+        ) : error ? (
+          <Text style={{ color: 'red' }}>{error}</Text>
+        ) : (
+          <FlatList
+            data={servicesData}
+            keyExtractor={(item, index) => item._id + index}
+            numColumns={2}
+            columnWrapperStyle={styles.cardRow}
+            contentContainerStyle={styles.flatListContentContainer}
+            renderItem={({ item }) => (
+              <View>
+                <ServicesCard
+                  name={item.name}
+                  desc={item.description}
+                  image={typeof item.image === 'string' ? item.image : undefined}
+                  consultantId={consultantId}
+                  serviceId={item._id}
+                />
+              </View>
+            )}
+            ListEmptyComponent={<Text>No services found.</Text>}
+          />
+        )}
       </SafeAreaView>
     </KeyboardAvoidingView>
   );

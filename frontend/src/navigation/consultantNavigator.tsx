@@ -2,8 +2,7 @@ import React from 'react';
 import { createStackNavigator } from '@react-navigation/stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import consultantHome from '../screen/consultant/consultantHome';
-import services from '../common/services';
-import selectSlot from '../common/selectSlot';
+// import services from '../common/services';
 import call from '../common/call';
 import chart from '../common/chart';
 import chat from '../common/chat';
@@ -15,6 +14,8 @@ import { Menu, Calendar, MessageCircle, Bell } from 'lucide-react-native';
 import ConsultantProfileSetup from '../screen/consultant/ConsultantProfileSetup';
 import ConsultantServiceApplication from '../screen/consultant/ConsultantServiceApplication';
 import ConsultantVerificationPending from '../screen/consultant/ConsultantVerificationPending';
+import ManageSlots from '../screen/consultant/ManageSlots';
+import ManageAvailability from '../screen/consultant/ManageAvailability';
 
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -25,9 +26,12 @@ function ConsultantTabNavigator() {
       screenOptions={({ route }) => ({
         tabBarIcon: ({ size, color }) => {
           if (route.name === 'Menu') return <Menu size={size} color={color} />;
-          if (route.name === 'Availability') return <Calendar size={size} color={color} />;
-          if (route.name === 'Message') return <MessageCircle size={size} color={color} />;
-          if (route.name === 'Notification') return <Bell size={size} color={color} />;
+          if (route.name === 'Availability')
+            return <Calendar size={size} color={color} />;
+          if (route.name === 'Message')
+            return <MessageCircle size={size} color={color} />;
+          if (route.name === 'Notification')
+            return <Bell size={size} color={color} />;
           return <Menu size={size} color={color} />;
         },
         tabBarActiveTintColor: '#187D22',
@@ -47,7 +51,7 @@ function ConsultantTabNavigator() {
       />
       <Tab.Screen
         name="Availability"
-        component={services}
+        component={ManageAvailability}
         options={{ title: 'Availability', headerShown: false }}
       />
       <Tab.Screen
@@ -67,18 +71,66 @@ function ConsultantTabNavigator() {
 const ConsultantNavigation = () => {
   return (
     <Stack.Navigator>
-      <Stack.Screen name="ConsultantTabs" component={ConsultantTabNavigator} options={{ headerShown: false }} />
-      <Stack.Screen name="ConsultantProfileSetup" component={ConsultantProfileSetup} options={{ headerShown: false }} />
-      <Stack.Screen name="ConsultantServiceApplication" component={ConsultantServiceApplication} options={{ headerShown: false }} />
-      <Stack.Screen name="ConsultantVerificationPending" component={ConsultantVerificationPending} options={{ headerShown: false }} />
-      <Stack.Screen name="selectSlot" component={selectSlot} options={{ headerShown: false }} />
-      <Stack.Screen name="call" component={call} options={{ headerShown: false }} />
-      <Stack.Screen name="chart" component={chart} options={{ headerShown: false }} />
-      <Stack.Screen name="chat" component={chat} options={{ headerShown: false }} />
-      <Stack.Screen name="conversation" component={conversation} options={{ headerShown: false }} />
-      <Stack.Screen name="notification" component={notification} options={{ headerShown: false }} />
-      <Stack.Screen name="myCart" component={myCart} options={{ headerShown: false }} />
-      <Stack.Screen name="VideoCall" component={VideoCall} options={{ headerShown: false }} />
+      <Stack.Screen
+        name="ConsultantTabs"
+        component={ConsultantTabNavigator}
+        options={{ headerShown: false }}
+      />
+      <Stack.Screen
+        name="ConsultantProfileSetup"
+        component={ConsultantProfileSetup}
+        options={{ headerShown: false }}
+      />
+      <Stack.Screen
+        name="ConsultantServiceApplication"
+        component={ConsultantServiceApplication}
+        options={{ headerShown: false }}
+      />
+      <Stack.Screen
+        name="ConsultantVerificationPending"
+        component={ConsultantVerificationPending}
+        options={{ headerShown: false }}
+      />
+      <Stack.Screen
+        name="call"
+        component={call}
+        options={{ headerShown: false }}
+      />
+      <Stack.Screen
+        name="chart"
+        component={chart}
+        options={{ headerShown: false }}
+      />
+      <Stack.Screen
+        name="chat"
+        component={chat}
+        options={{ headerShown: false }}
+      />
+      <Stack.Screen
+        name="conversation"
+        component={conversation}
+        options={{ headerShown: false }}
+      />
+      <Stack.Screen
+        name="notification"
+        component={notification}
+        options={{ headerShown: false }}
+      />
+      <Stack.Screen
+        name="myCart"
+        component={myCart}
+        options={{ headerShown: false }}
+      />
+      <Stack.Screen
+        name="VideoCall"
+        component={VideoCall}
+        options={{ headerShown: false }}
+      />
+      <Stack.Screen
+        name="ManageSlots"
+        component={ManageSlots}
+        options={{ headerShown: false }}
+      />
       {/* Add more consultant-specific screens here */}
     </Stack.Navigator>
   );

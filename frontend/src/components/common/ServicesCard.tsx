@@ -2,15 +2,23 @@ import React from 'react';
 import { Image, StyleSheet, Text, View } from 'react-native';
 import Button from './Button';
 import { useNavigation } from '@react-navigation/native';
+import type { StackNavigationProp } from '@react-navigation/stack';
+
+type RootStackParamList = {
+  selectSlot: { consultantId: string; serviceId: string };
+  // ...other routes
+};
 
 interface ServicesCardProps {
   name: string;
   desc: string;
   image?: string;
+  consultantId: string;
+  serviceId: string;
 }
 
-const ServicesCard: React.FC<ServicesCardProps> = ({ name, desc, image }) => {
-  const navigation = useNavigation();
+const ServicesCard: React.FC<ServicesCardProps> = ({ name, desc, image, consultantId, serviceId }) => {
+  const navigation = useNavigation<StackNavigationProp<RootStackParamList>>();
   return (
     <View style={styles.box}>
       <Image
@@ -21,7 +29,7 @@ const ServicesCard: React.FC<ServicesCardProps> = ({ name, desc, image }) => {
       <Text style={styles.desc}>{desc}</Text>
       <Button
         title={'Book Now'}
-        onPress={() => navigation.navigate('selectSlot' as never)}
+        onPress={() => navigation.navigate('selectSlot', { consultantId, serviceId })}
         customStyle={styles.btn}
         textStyle={styles.btnText}
       />

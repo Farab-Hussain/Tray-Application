@@ -14,15 +14,15 @@ const ProfileHeader = ({ title, userName, userImage, subtitle }: ProfileHeaderPr
     <View style={styles.container}>
       <SafeAreaView style={styles.safeArea}>
         {showUser ? (
-          <View style={styles.row}>
-            {userImage && (
-              <Image source={{ uri: userImage }} style={styles.avatar} />
-            )}
-            <View style={styles.textContainer}>
+          <View style={styles.rowSpaceBetween}>
+            <View style={styles.textContainerLeft}>
               <Text style={styles.userName}>{userName}</Text>
               {subtitle && <Text style={styles.subtitle}>{subtitle}</Text>}
-              <Text style={styles.title}>{title}</Text>
             </View>
+            <Image
+              source={typeof userImage === 'string' ? { uri: userImage } : userImage}
+              style={styles.avatar}
+            />
           </View>
         ) : (
           <View style={styles.centeredTitleRow}>
@@ -57,6 +57,17 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     width: '100%',
+    justifyContent: 'center',
+  },
+  rowSpaceBetween: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    width: '100%',
+    justifyContent: 'space-between',
+  },
+  textContainerLeft: {
+    flexDirection: 'column',
+    alignItems: 'flex-start',
     justifyContent: 'center',
   },
   avatar: {

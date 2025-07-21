@@ -2,13 +2,21 @@ import React from 'react';
 import { Image, StyleSheet, Text, View } from 'react-native';
 import { MessageCircle, Phone, Video } from 'lucide-react-native';
 import Button from './Button';
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation} from '@react-navigation/native';
+import type { StackNavigationProp } from '@react-navigation/stack';
+// Define the navigation param list for your stack
+// Use lowercase 'services' to match the route name
+type RootStackParamList = {
+  services: { consultantId: string };
+  // ... other routes
+};
 
 interface ConsultantCardProps {
   name: string;
   role: string;
   rating: number;
   image?: string;
+  consultantId: string;
 }
 
 const RecommendedCard: React.FC<ConsultantCardProps> = ({
@@ -16,8 +24,10 @@ const RecommendedCard: React.FC<ConsultantCardProps> = ({
   role,
   rating,
   image,
+  consultantId,
 }) => {
-  const navigation = useNavigation();
+  const navigation = useNavigation<StackNavigationProp<RootStackParamList>>();
+
   return (
     <View style={styles.card}>
       <Image
@@ -31,7 +41,7 @@ const RecommendedCard: React.FC<ConsultantCardProps> = ({
       <Button
         title="Book now"
         onPress={() => {
-          navigation.navigate('services' as never);
+          navigation.navigate('services', { consultantId });
         }}
         customStyle={styles.bookBtn}
         textStyle={styles.bookBtnText}

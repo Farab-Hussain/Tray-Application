@@ -3,6 +3,17 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import api from './api';
 import axios from 'axios';
 import { API_BASE_URL } from './config';
+import { create } from 'zustand';
+
+interface UserState {
+  email: string | null;
+  setEmail: (email: string) => void;
+}
+
+export const useUserStore = create<UserState>((set) => ({
+  email: null,
+  setEmail: (email) => set({ email }),
+}));
 
 // Token storage keys
 const AUTH_TOKEN_KEY = 'auth_token';
@@ -79,10 +90,18 @@ const handleDeepLink = (url: string, navigation: any) => {
  * @param token - JWT token
  * @param userId - User ID
  */
-export const storeAuthData = async (token: string, userId: string) => {
+export const storeAuthData = async (token: string, userId: string | null | undefined) => {
   try {
-    await AsyncStorage.setItem(AUTH_TOKEN_KEY, token);
-    await AsyncStorage.setItem(USER_ID_KEY, userId);
+    if (token !== undefined && token !== null) {
+      await AsyncStorage.setItem(AUTH_TOKEN_KEY, token);
+    } else {
+      await AsyncStorage.removeItem(AUTH_TOKEN_KEY);
+    }
+    if (userId !== undefined && userId !== null) {
+      await AsyncStorage.setItem(USER_ID_KEY, userId);
+    } else {
+      await AsyncStorage.removeItem(USER_ID_KEY);
+    }
     return true;
   } catch (error) {
     console.error('Error storing auth data:', error);
@@ -129,9 +148,13 @@ export const clearAuthData = async (): Promise<boolean> => {
 
 export const login = async (email: string, password: string) => {
   const response = await api.post('/api/auth/login', { email, password });
-  const { token, userId } = response.data;
-  await storeAuthData(token, userId);
-  return response.data;
+  const { token, userId, user } = response.data;
+  let finalUserId = userId;
+  if (!finalUserId && user && user._id) {
+    finalUserId = user._id;
+  }
+  await storeAuthData(token, finalUserId);
+  return { ...response.data, userId: finalUserId, user };
 };
 
 export const register = async (userData: any) => {
